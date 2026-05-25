@@ -3,12 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>সবুজ শিখর | Eco-Social Pro</title>
+    <title>সবুজ শিখর | আগামীর ভবিষ্যৎ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Hind Siliguri', sans-serif; background: #f8fafc; }
-        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        
+        /* ব্যাকগ্রাউন্ডে আপনার দেওয়া সেই সুন্দর ছবি */
+        #login-section { 
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+                        url('https://images.unsplash.com/photo-1542601906990-b4d3fb773b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'); /* এখানে আপনার সোর্সের মতো ছবি ব্যবহার করা হয়েছে */
+            background-size: cover;
+            background-position: center;
+        }
+
         .nav-active { color: #059669 !important; border-top: 3px solid #059669; }
         .tab-content { display: none; animation: fadeIn 0.4s ease-in-out; }
         .active-tab { display: block; }
@@ -17,15 +26,22 @@
 </head>
 <body class="min-h-screen pb-24">
 
-<section id="login-section" class="fixed inset-0 z-[100] bg-white flex items-center justify-center p-6 text-center">
-    <div class="max-w-md w-full">
-        <div class="text-6xl mb-4">🌳</div>
-        <h1 class="text-4xl font-bold text-green-800 mb-2">সবুজ শিখর</h1>
-        <p class="text-gray-500 mb-10">পরিবেশের হিরো হয়ে উঠুন এখনই</p>
-        <button id="login-btn" class="w-full bg-green-600 text-white py-4 rounded-2xl font-bold text-lg shadow-xl flex items-center justify-center gap-3">
-            <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-6 h-6 bg-white rounded-full p-1">
-            গুগল দিয়ে প্রবেশ করুন
-        </button>
+<section id="login-section" class="fixed inset-0 z-[100] flex items-center justify-center p-6 text-center">
+    <div class="glass max-w-md w-full p-10 rounded-[2.5rem] shadow-2xl animate-fade">
+        <div class="text-6xl mb-6">🍃</div>
+        <h1 class="text-4xl font-bold text-green-900 mb-4">সবুজ শিখর</h1>
+        
+        <p class="text-xl font-medium text-green-800 leading-relaxed mb-8">
+            "একটি গাছ, একটি প্রাণ; <br>আগামীর ভবিষ্যৎ আমাদের দান"
+        </p>
+
+        <div class="space-y-6">
+            <p class="text-gray-600 text-sm">পরিবেশ রক্ষায় আপনার অবদান আমাদের প্রেরণা। আজই যুক্ত হোন আমাদের সাথে।</p>
+            <button id="login-btn" class="w-full bg-green-700 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:bg-green-800 transition-all flex items-center justify-center gap-3 active:scale-95">
+                <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-6 h-6 bg-white rounded-full p-1">
+                গুগল দিয়ে শুরু করুন
+            </button>
+        </div>
     </div>
 </section>
 
@@ -44,60 +60,47 @@
 </header>
 
 <main id="app-content" class="hidden container mx-auto max-w-2xl p-4 mt-2">
-    
     <div id="tab-home" class="tab-content active-tab">
         <div class="bg-white rounded-3xl p-5 shadow-sm mb-6">
-            <textarea id="post-text" class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-1 focus:ring-green-500 min-h-[100px]" placeholder="আজ পরিবেশের জন্য কী করলেন?"></textarea>
-            <button id="post-btn" class="w-full bg-green-600 text-white mt-3 py-3 rounded-xl font-bold shadow-lg shadow-green-100">শেয়ার করুন</button>
+            <textarea id="post-text" class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-1 focus:ring-green-500 min-h-[100px]" placeholder="পরিবেশ রক্ষায় আজ কী করলেন?"></textarea>
+            <button id="post-btn" class="w-full bg-green-600 text-white mt-3 py-3 rounded-xl font-bold shadow-lg">শেয়ার করুন</button>
         </div>
         <div id="feed-container" class="space-y-4"></div>
     </div>
 
     <div id="tab-actions" class="tab-content">
         <h2 class="text-2xl font-bold mb-6 text-gray-800">পরিবেশ রক্ষা মিশন</h2>
-        <div class="grid grid-cols-1 gap-4">
-            <div class="bg-green-100 p-6 rounded-3xl flex justify-between items-center border border-green-200">
-                <div><h3 class="text-xl font-bold text-green-800">গাছ লাগানো</h3><p class="text-sm text-green-600">+৫০ XP পাবেন</p></div>
-                <button class="bg-green-600 text-white px-6 py-2 rounded-full font-bold">সম্পন্ন</button>
+        <div class="grid gap-4">
+            <div class="bg-green-50 p-6 rounded-3xl flex justify-between items-center border border-green-100 shadow-sm">
+                <div><h3 class="font-bold text-green-800">গাছ লাগানো</h3><p class="text-xs text-green-600">+৫০ XP</p></div>
+                <button class="bg-green-600 text-white px-5 py-2 rounded-full text-sm font-bold">সম্পন্ন</button>
             </div>
-            <div class="bg-blue-100 p-6 rounded-3xl flex justify-between items-center border border-blue-200">
-                <div><h3 class="text-xl font-bold text-blue-800">এলাকা পরিষ্কার</h3><p class="text-sm text-blue-600">+৩০ XP পাবেন</p></div>
-                <button class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold">সম্পন্ন</button>
-            </div>
-            <div class="bg-orange-100 p-6 rounded-3xl flex justify-between items-center border border-orange-200">
-                <div><h3 class="text-xl font-bold text-orange-800">রিসাইকেল (Recycle)</h3><p class="text-sm text-orange-600">+২০ XP পাবেন</p></div>
-                <button class="bg-orange-600 text-white px-6 py-2 rounded-full font-bold">সম্পন্ন</button>
+            <div class="bg-blue-50 p-6 rounded-3xl flex justify-between items-center border border-blue-100 shadow-sm">
+                <div><h3 class="font-bold text-blue-800">এলাকা পরিষ্কার</h3><p class="text-xs text-blue-600">+৩০ XP</p></div>
+                <button class="bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-bold">সম্পন্ন</button>
             </div>
         </div>
-    </div>
-
-    <div id="tab-map" class="tab-content">
-        <div class="bg-gray-200 w-full h-96 rounded-3xl flex items-center justify-center text-gray-500 font-bold border-2 border-dashed border-gray-400">
-            ম্যাপ লোড হচ্ছে... (গুগল ম্যাপ API প্রয়োজন)
-        </div>
-        <p class="mt-4 text-center text-gray-400 text-sm">আপনার এলাকার পরিবেশ রক্ষা মিশনগুলো ম্যাপে দেখুন</p>
     </div>
 
     <div id="tab-leaderboard" class="tab-content">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">সেরা পরিবেশ যোদ্ধা</h2>
-        <div id="leaderboard-list" class="bg-white rounded-3xl shadow-sm divide-y">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">🏆 সেরা পরিবেশ যোদ্ধা</h2>
+        <div id="leaderboard-list" class="bg-white rounded-3xl shadow-sm divide-y overflow-hidden border">
             </div>
     </div>
 
     <div id="tab-profile" class="tab-content text-center">
         <div class="bg-white rounded-3xl p-8 shadow-sm">
             <img id="profile-img-big" src="" class="w-32 h-32 rounded-full mx-auto border-4 border-green-50 object-cover mb-4">
-            <input type="text" id="edit-name" class="text-center text-2xl font-bold w-full outline-none mb-2" placeholder="আপনার নাম">
-            <textarea id="edit-bio" class="text-center text-gray-500 w-full outline-none mb-6" placeholder="আপনার বায়ো যোগ করুন..."></textarea>
+            <input type="text" id="edit-name" class="text-center text-2xl font-bold w-full outline-none mb-2 bg-transparent" placeholder="আপনার নাম">
+            <textarea id="edit-bio" class="text-center text-gray-500 w-full outline-none mb-6 bg-transparent" placeholder="একটি ছোট বায়ো লিখুন..."></textarea>
             <div class="grid grid-cols-2 gap-4 mb-8">
                 <div class="bg-gray-50 p-4 rounded-2xl"><p class="text-xs text-gray-400">মোট XP</p><p id="profile-xp" class="text-xl font-bold text-green-600">০</p></div>
-                <div class="bg-gray-50 p-4 rounded-2xl"><p class="text-xs text-gray-400">র‍্যাঙ্ক</p><p id="profile-rank" class="text-sm font-bold text-blue-600 italic">Starter</p></div>
+                <div class="bg-gray-50 p-4 rounded-2xl"><p class="text-xs text-gray-400">র‍্যাঙ্ক</p><p id="profile-rank" class="text-sm font-bold text-blue-600">Green Starter</p></div>
             </div>
-            <button id="save-profile" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold mb-4">তথ্য আপডেট করুন</button>
-            <button id="logout-btn" class="text-red-500 font-bold">লগ আউট</button>
+            <button id="save-profile" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold mb-4 shadow-lg shadow-green-100">তথ্য আপডেট করুন</button>
+            <button id="logout-btn" class="text-red-500 font-bold text-sm">লগ আউট</button>
         </div>
     </div>
-
 </main>
 
 <nav id="bottom-nav" class="hidden fixed bottom-0 inset-x-0 glass border-t border-gray-100 flex justify-around items-center py-4 px-2 z-[60]">
@@ -106,9 +109,6 @@
     </button>
     <button onclick="switchTab('actions')" class="nav-item flex flex-col items-center text-gray-400" id="nav-actions">
         <span class="text-xl">🛠️</span><span class="text-[10px] font-bold">মিশন</span>
-    </button>
-    <button onclick="switchTab('map')" class="nav-item flex flex-col items-center text-gray-400" id="nav-map">
-        <span class="text-xl">📍</span><span class="text-[10px] font-bold">ম্যাপ</span>
     </button>
     <button onclick="switchTab('leaderboard')" class="nav-item flex flex-col items-center text-gray-400" id="nav-leaderboard">
         <span class="text-xl">🏆</span><span class="text-[10px] font-bold">র‍্যাঙ্ক</span>
@@ -137,15 +137,12 @@
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
 
-    // ট্যাব সুইচ করার ফাংশন
     window.switchTab = (tabName) => {
         document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
         document.getElementById('tab-' + tabName).classList.add('active-tab');
-        
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
         document.getElementById('nav-' + tabName).classList.add('nav-active');
-
-        const titles = { home: 'হোম', actions: 'মিশন', map: 'ম্যাপ', leaderboard: 'লিডারবোর্ড', profile: 'প্রোফাইল' };
+        const titles = { home: 'হোম', actions: 'মিশন', leaderboard: 'লিডারবোর্ড', profile: 'প্রোফাইল' };
         document.getElementById('tab-title').innerText = titles[tabName];
     };
 
@@ -172,38 +169,35 @@
                 await setDoc(userRef, { name: user.displayName, photo: user.photoURL, xp: 0, bio: "" });
             }
 
-            // ফিড লোড
+            // ফিড ও লিডারবোর্ড লোডিং...
             onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), (snap) => {
                 let html = "";
                 snap.forEach(doc => {
                     const post = doc.data();
-                    html += `
-                        <div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-50">
-                            <div class="flex items-center gap-3 mb-3">
-                                <img src="${post.userPhoto}" class="w-10 h-10 rounded-full">
-                                <p class="font-bold text-gray-800">${post.userName}</p>
-                            </div>
-                            <p class="text-gray-600">${post.text}</p>
-                        </div>`;
+                    html += `<div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-50 mb-4 animate-fade">
+                                <div class="flex items-center gap-3 mb-3">
+                                    <img src="${post.userPhoto}" class="w-10 h-10 rounded-full">
+                                    <p class="font-bold text-gray-800">${post.userName}</p>
+                                </div>
+                                <p class="text-gray-600">${post.text}</p>
+                            </div>`;
                 });
                 document.getElementById('feed-container').innerHTML = html;
             });
 
-            // লিডারবোর্ড লোড
             onSnapshot(query(collection(db, "users"), orderBy("xp", "desc"), limit(10)), (snap) => {
                 let html = "";
                 let rank = 1;
                 snap.forEach(doc => {
                     const u = doc.data();
-                    html += `
-                        <div class="flex items-center justify-between p-4">
-                            <div class="flex items-center gap-4">
-                                <span class="font-bold text-gray-400 w-4">${rank++}</span>
-                                <img src="${u.photo}" class="w-10 h-10 rounded-full">
-                                <p class="font-bold text-gray-700">${u.name}</p>
-                            </div>
-                            <p class="font-bold text-green-600">${u.xp} XP</p>
-                        </div>`;
+                    html += `<div class="flex items-center justify-between p-4">
+                                <div class="flex items-center gap-4">
+                                    <span class="font-bold text-gray-300 w-4">${rank++}</span>
+                                    <img src="${u.photo}" class="w-10 h-10 rounded-full border">
+                                    <p class="font-bold text-gray-700">${u.name}</p>
+                                </div>
+                                <p class="font-bold text-green-600">${u.xp} XP</p>
+                            </div>`;
                 });
                 document.getElementById('leaderboard-list').innerHTML = html;
             });
