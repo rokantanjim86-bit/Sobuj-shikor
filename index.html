@@ -3,54 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>সবুজ শিখর | আগামীর ভবিষ্যৎ</title>
+    <title>সবুজ শিখর | Eco-Social Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         body { font-family: 'Hind Siliguri', sans-serif; background: #f8fafc; }
         .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
-        
-        /* ব্যাকগ্রাউন্ডে আপনার দেওয়া সেই সুন্দর ছবি */
         #login-section { 
-            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                        url('https://images.unsplash.com/photo-1542601906990-b4d3fb773b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'); /* এখানে আপনার সোর্সের মতো ছবি ব্যবহার করা হয়েছে */
-            background-size: cover;
-            background-position: center;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1542601906990-b4d3fb773b09?auto=format&fit=crop&w=1000&q=80');
+            background-size: cover; background-position: center;
         }
-
-        .nav-active { color: #059669 !important; border-top: 3px solid #059669; }
-        .tab-content { display: none; animation: fadeIn 0.4s ease-in-out; }
-        .active-tab { display: block; }
+        .tab-content { display: none; }
+        .active-tab { display: block; animation: fadeIn 0.4s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        #ai-chat-window { display: none; transition: all 0.3s ease; }
+        #map { height: 400px; border-radius: 24px; z-index: 10; }
     </style>
 </head>
 <body class="min-h-screen pb-24">
 
 <section id="login-section" class="fixed inset-0 z-[100] flex items-center justify-center p-6 text-center">
-    <div class="glass max-w-md w-full p-10 rounded-[2.5rem] shadow-2xl animate-fade">
+    <div class="glass max-w-md w-full p-10 rounded-[2.5rem] shadow-2xl">
         <div class="text-6xl mb-6">🍃</div>
         <h1 class="text-4xl font-bold text-green-900 mb-4">সবুজ শিখর</h1>
-        
-        <p class="text-xl font-medium text-green-800 leading-relaxed mb-8">
-            "একটি গাছ, একটি প্রাণ; <br>আগামীর ভবিষ্যৎ আমাদের দান"
-        </p>
-
-        <div class="space-y-6">
-            <p class="text-gray-600 text-sm">পরিবেশ রক্ষায় আপনার অবদান আমাদের প্রেরণা। আজই যুক্ত হোন আমাদের সাথে।</p>
-            <button id="login-btn" class="w-full bg-green-700 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:bg-green-800 transition-all flex items-center justify-center gap-3 active:scale-95">
-                <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-6 h-6 bg-white rounded-full p-1">
-                গুগল দিয়ে শুরু করুন
-            </button>
-        </div>
+        <p class="text-xl font-medium text-green-800 leading-relaxed mb-8">"একটি গাছ, একটি প্রাণ; <br>আগামীর ভবিষ্যৎ আমাদের দান"</p>
+        <button id="login-btn" class="w-full bg-green-700 text-white py-4 rounded-2xl font-bold text-lg shadow-lg flex items-center justify-center gap-3 active:scale-95">
+            <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-6 h-6 bg-white rounded-full p-1"> গুগল দিয়ে শুরু করুন
+        </button>
     </div>
 </section>
 
-<header id="main-header" class="hidden glass sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-sm">
-    <div class="flex items-center gap-2">
-        <span class="text-2xl">🌱</span>
-        <span id="tab-title" class="text-xl font-bold text-green-800">হোম</span>
+<div id="reg-modal" class="hidden fixed inset-0 z-[150] bg-white p-8 overflow-y-auto">
+    <h2 class="text-2xl font-bold text-green-800 mb-6 text-center">আপনার প্রোফাইল সম্পন্ন করুন</h2>
+    <div class="space-y-4 max-w-md mx-auto">
+        <input id="reg-phone" type="tel" placeholder="ফোন নম্বর" class="w-full p-4 bg-gray-100 rounded-2xl outline-none border focus:border-green-500">
+        <input id="reg-job" type="text" placeholder="পেশা (ছাত্র/কৃষক/চাকরি)" class="w-full p-4 bg-gray-100 rounded-2xl outline-none border focus:border-green-500">
+        <select id="reg-division" class="w-full p-4 bg-gray-100 rounded-2xl outline-none border focus:border-green-500">
+            <option value="">বিভাগ নির্বাচন করুন</option>
+            <option value="Dhaka">ঢাকা</option><option value="Chattogram">চট্টগ্রাম</option><option value="Rajshahi">রাজশাহী</option>
+            <option value="Khulna">খুলনা</option><option value="Barishal">বরিশাল</option><option value="Sylhet">সিলেট</option>
+            <option value="Rangpur">রংপুর</option><option value="Mymensingh">ময়মনসিংহ</option>
+        </select>
+        <div class="grid grid-cols-2 gap-4">
+            <input id="reg-district" type="text" placeholder="জেলা" class="w-full p-4 bg-gray-100 rounded-2xl outline-none border focus:border-green-500">
+            <input id="reg-upazila" type="text" placeholder="উপজেলা" class="w-full p-4 bg-gray-100 rounded-2xl outline-none border focus:border-green-500">
+        </div>
+        <textarea id="reg-address" placeholder="বিস্তারিত গ্রাম/মহল্লা এবং সড়ক নম্বর" class="w-full p-4 bg-gray-100 rounded-2xl outline-none border focus:border-green-500 h-24"></textarea>
+        <button id="save-reg-btn" class="w-full bg-green-700 text-white py-4 rounded-2xl font-bold shadow-xl">সবুজ যাত্রা শুরু করুন</button>
     </div>
-    <div id="user-info" class="flex items-center gap-2">
+</div>
+
+<header id="main-header" class="hidden glass sticky top-0 z-50 px-6 py-4 flex justify-between items-center shadow-sm">
+    <div class="flex items-center gap-2"><span class="text-2xl">🌱</span><span id="tab-title" class="text-xl font-bold text-green-800">হোম</span></div>
+    <div class="flex items-center gap-2">
         <div class="text-right">
             <p id="top-user-name" class="text-xs font-bold text-gray-700"></p>
             <p id="top-user-xp" class="text-[10px] text-green-600 font-bold">০ XP</p>
@@ -62,66 +68,67 @@
 <main id="app-content" class="hidden container mx-auto max-w-2xl p-4 mt-2">
     <div id="tab-home" class="tab-content active-tab">
         <div class="bg-white rounded-3xl p-5 shadow-sm mb-6">
-            <textarea id="post-text" class="w-full bg-gray-50 border-none rounded-2xl p-4 focus:ring-1 focus:ring-green-500 min-h-[100px]" placeholder="পরিবেশ রক্ষায় আজ কী করলেন?"></textarea>
+            <textarea id="post-text" class="w-full bg-gray-50 border-none rounded-2xl p-4 min-h-[100px]" placeholder="পরিবেশ রক্ষায় আজ কী করলেন?"></textarea>
             <button id="post-btn" class="w-full bg-green-600 text-white mt-3 py-3 rounded-xl font-bold shadow-lg">শেয়ার করুন</button>
         </div>
         <div id="feed-container" class="space-y-4"></div>
     </div>
 
+    <div id="tab-map" class="tab-content">
+        <h2 class="text-2xl font-bold mb-4 text-gray-800 text-center">সবুজ ম্যাপ 🌍</h2>
+        <div id="map" class="shadow-xl border-4 border-white"></div>
+        <p class="text-center text-xs text-green-600 mt-4 font-bold">আপনার এলাকার সবুজ যোদ্ধাদের অবস্থান দেখুন</p>
+    </div>
+
     <div id="tab-actions" class="tab-content">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800">পরিবেশ রক্ষা মিশন</h2>
-        <div class="grid gap-4">
-            <div class="bg-green-50 p-6 rounded-3xl flex justify-between items-center border border-green-100 shadow-sm">
-                <div><h3 class="font-bold text-green-800">গাছ লাগানো</h3><p class="text-xs text-green-600">+৫০ XP</p></div>
-                <button class="bg-green-600 text-white px-5 py-2 rounded-full text-sm font-bold">সম্পন্ন</button>
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">মিশন ও কার্যক্রম</h2>
+        <div class="space-y-4">
+            <div class="bg-green-50 p-6 rounded-3xl flex justify-between items-center border shadow-sm">
+                <div><h3 class="font-bold text-green-800 text-lg">গাছ লাগানো</h3><p class="text-xs text-green-600">+৫০ XP</p></div>
+                <button onclick="addXP(50)" class="bg-green-600 text-white px-6 py-2 rounded-full font-bold">সম্পন্ন</button>
             </div>
-            <div class="bg-blue-50 p-6 rounded-3xl flex justify-between items-center border border-blue-100 shadow-sm">
-                <div><h3 class="font-bold text-blue-800">এলাকা পরিষ্কার</h3><p class="text-xs text-blue-600">+৩০ XP</p></div>
-                <button class="bg-blue-600 text-white px-5 py-2 rounded-full text-sm font-bold">সম্পন্ন</button>
+            <div class="bg-blue-50 p-6 rounded-3xl flex justify-between items-center border shadow-sm">
+                <div><h3 class="font-bold text-blue-800 text-lg">পরিষ্কার অভিযান</h3><p class="text-xs text-blue-600">+৩০ XP</p></div>
+                <button onclick="addXP(30)" class="bg-blue-600 text-white px-6 py-2 rounded-full font-bold">সম্পন্ন</button>
             </div>
         </div>
     </div>
 
-    <div id="tab-leaderboard" class="tab-content">
-        <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">🏆 সেরা পরিবেশ যোদ্ধা</h2>
-        <div id="leaderboard-list" class="bg-white rounded-3xl shadow-sm divide-y overflow-hidden border">
-            </div>
-    </div>
-
-    <div id="tab-profile" class="tab-content text-center">
-        <div class="bg-white rounded-3xl p-8 shadow-sm">
-            <img id="profile-img-big" src="" class="w-32 h-32 rounded-full mx-auto border-4 border-green-50 object-cover mb-4">
-            <input type="text" id="edit-name" class="text-center text-2xl font-bold w-full outline-none mb-2 bg-transparent" placeholder="আপনার নাম">
-            <textarea id="edit-bio" class="text-center text-gray-500 w-full outline-none mb-6 bg-transparent" placeholder="একটি ছোট বায়ো লিখুন..."></textarea>
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="bg-gray-50 p-4 rounded-2xl"><p class="text-xs text-gray-400">মোট XP</p><p id="profile-xp" class="text-xl font-bold text-green-600">০</p></div>
-                <div class="bg-gray-50 p-4 rounded-2xl"><p class="text-xs text-gray-400">র‍্যাঙ্ক</p><p id="profile-rank" class="text-sm font-bold text-blue-600">Green Starter</p></div>
-            </div>
-            <button id="save-profile" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold mb-4 shadow-lg shadow-green-100">তথ্য আপডেট করুন</button>
-            <button id="logout-btn" class="text-red-500 font-bold text-sm">লগ আউট</button>
-        </div>
+    <div id="tab-rank" class="tab-content">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800 text-center">🏆 সেরা হিরো</h2>
+        <div id="leaderboard-list" class="bg-white rounded-3xl shadow-sm border overflow-hidden"></div>
     </div>
 </main>
 
-<nav id="bottom-nav" class="hidden fixed bottom-0 inset-x-0 glass border-t border-gray-100 flex justify-around items-center py-4 px-2 z-[60]">
-    <button onclick="switchTab('home')" class="nav-item flex flex-col items-center nav-active" id="nav-home">
-        <span class="text-xl">🏠</span><span class="text-[10px] font-bold">হোম</span>
-    </button>
-    <button onclick="switchTab('actions')" class="nav-item flex flex-col items-center text-gray-400" id="nav-actions">
-        <span class="text-xl">🛠️</span><span class="text-[10px] font-bold">মিশন</span>
-    </button>
-    <button onclick="switchTab('leaderboard')" class="nav-item flex flex-col items-center text-gray-400" id="nav-leaderboard">
-        <span class="text-xl">🏆</span><span class="text-[10px] font-bold">র‍্যাঙ্ক</span>
-    </button>
-    <button onclick="switchTab('profile')" class="nav-item flex flex-col items-center text-gray-400" id="nav-profile">
-        <span class="text-xl">👤</span><span class="text-[10px] font-bold">প্রোফাইল</span>
-    </button>
+<div id="ai-assistant" class="fixed bottom-24 right-6 z-[200]">
+    <div id="ai-chat-window" class="glass w-72 h-96 mb-4 rounded-3xl shadow-2xl flex flex-col overflow-hidden">
+        <div class="bg-green-700 text-white p-4 font-bold flex justify-between">
+            <span>এআই অ্যাসিস্ট্যান্ট</span>
+            <button onclick="toggleAI()">✖</button>
+        </div>
+        <div id="ai-messages" class="flex-1 p-4 overflow-y-auto text-sm space-y-2">
+            <p class="bg-green-100 p-2 rounded-lg">নমস্কার! আমি আপনাকে পরিবেশ রক্ষায় কীভাবে সাহায্য করতে পারি? (উদাঃ গাছ লাগানো বা রিসাইক্লিং)</p>
+        </div>
+        <div class="p-3 border-t flex gap-2">
+            <input id="ai-input" type="text" placeholder="কিছু জিজ্ঞেস করুন..." class="flex-1 text-xs p-2 rounded-lg border outline-none">
+            <button onclick="askAI()" class="bg-green-600 text-white p-2 rounded-lg text-xs font-bold">পাঠান</button>
+        </div>
+    </div>
+    <button onclick="toggleAI()" class="bg-green-700 w-14 h-14 rounded-full shadow-2xl flex items-center justify-center text-2xl animate-bounce">🤖</button>
+</div>
+
+<nav id="bottom-nav" class="hidden fixed bottom-0 inset-x-0 glass border-t flex justify-around items-center py-4 z-[60]">
+    <button onclick="switchTab('home')" class="flex flex-col items-center text-green-700 font-bold"><span class="text-xl">🏠</span><span class="text-[10px]">হোম</span></button>
+    <button onclick="switchTab('map')" class="flex flex-col items-center text-gray-400"><span class="text-xl">📍</span><span class="text-[10px]">ম্যাপ</span></button>
+    <button onclick="switchTab('actions')" class="flex flex-col items-center text-gray-400"><span class="text-xl">🛠️</span><span class="text-[10px]">মিশন</span></button>
+    <button onclick="switchTab('rank')" class="flex flex-col items-center text-gray-400"><span class="text-xl">🏆</span><span class="text-[10px]">র‍্যাঙ্ক</span></button>
 </nav>
 
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, updateDoc, limit } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAPFw8UVunLn_ob9zuaY-0unZyiA0bED70",
@@ -136,96 +143,127 @@
     const auth = getAuth();
     const db = getFirestore(app);
     const provider = new GoogleAuthProvider();
+    let map;
 
-    window.switchTab = (tabName) => {
-        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
-        document.getElementById('tab-' + tabName).classList.add('active-tab');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
-        document.getElementById('nav-' + tabName).classList.add('nav-active');
-        const titles = { home: 'হোম', actions: 'মিশন', leaderboard: 'লিডারবোর্ড', profile: 'প্রোফাইল' };
-        document.getElementById('tab-title').innerText = titles[tabName];
-    };
+    // ১. লগইন লজিক
+    document.getElementById('login-btn').onclick = () => signInWithPopup(auth, provider);
 
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            document.getElementById('login-section').classList.add('hidden');
-            document.getElementById('main-header').classList.remove('hidden');
-            document.getElementById('app-content').classList.remove('hidden');
-            document.getElementById('bottom-nav').classList.remove('hidden');
-
             const userRef = doc(db, "users", user.uid);
             const userSnap = await getDoc(userRef);
             
-            if (userSnap.exists()) {
-                const data = userSnap.data();
-                document.getElementById('top-user-name').innerText = data.name || user.displayName;
-                document.getElementById('top-user-xp').innerText = (data.xp || 0) + ' XP';
-                document.getElementById('top-user-img').src = data.photo || user.photoURL;
-                document.getElementById('profile-img-big').src = data.photo || user.photoURL;
-                document.getElementById('edit-name').value = data.name || user.displayName;
-                document.getElementById('edit-bio').value = data.bio || "";
-                document.getElementById('profile-xp').innerText = data.xp || 0;
+            if (!userSnap.exists() || !userSnap.data().phone) {
+                document.getElementById('reg-modal').classList.remove('hidden');
             } else {
-                await setDoc(userRef, { name: user.displayName, photo: user.photoURL, xp: 0, bio: "" });
+                setupApp(user, userSnap.data());
             }
-
-            // ফিড ও লিডারবোর্ড লোডিং...
-            onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), (snap) => {
-                let html = "";
-                snap.forEach(doc => {
-                    const post = doc.data();
-                    html += `<div class="bg-white p-5 rounded-3xl shadow-sm border border-gray-50 mb-4 animate-fade">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <img src="${post.userPhoto}" class="w-10 h-10 rounded-full">
-                                    <p class="font-bold text-gray-800">${post.userName}</p>
-                                </div>
-                                <p class="text-gray-600">${post.text}</p>
-                            </div>`;
-                });
-                document.getElementById('feed-container').innerHTML = html;
-            });
-
-            onSnapshot(query(collection(db, "users"), orderBy("xp", "desc"), limit(10)), (snap) => {
-                let html = "";
-                let rank = 1;
-                snap.forEach(doc => {
-                    const u = doc.data();
-                    html += `<div class="flex items-center justify-between p-4">
-                                <div class="flex items-center gap-4">
-                                    <span class="font-bold text-gray-300 w-4">${rank++}</span>
-                                    <img src="${u.photo}" class="w-10 h-10 rounded-full border">
-                                    <p class="font-bold text-gray-700">${u.name}</p>
-                                </div>
-                                <p class="font-bold text-green-600">${u.xp} XP</p>
-                            </div>`;
-                });
-                document.getElementById('leaderboard-list').innerHTML = html;
-            });
         }
     });
 
-    document.getElementById('login-btn').onclick = () => signInWithPopup(auth, provider);
-    document.getElementById('logout-btn').onclick = () => signOut(auth);
-    
-    document.getElementById('post-btn').onclick = async () => {
-        const input = document.getElementById('post-text');
-        if (!input.value.trim()) return;
-        await addDoc(collection(db, "posts"), {
-            userName: auth.currentUser.displayName,
-            userPhoto: auth.currentUser.photoURL,
-            text: input.value,
-            time: new Date()
-        });
-        input.value = "";
+    // ২. প্রোফাইল ডাটা সেভ
+    document.getElementById('save-reg-btn').onclick = async () => {
+        const data = {
+            name: auth.currentUser.displayName,
+            photo: auth.currentUser.photoURL,
+            phone: document.getElementById('reg-phone').value,
+            job: document.getElementById('reg-job').value,
+            division: document.getElementById('reg-division').value,
+            district: document.getElementById('reg-district').value,
+            upazila: document.getElementById('reg-upazila').value,
+            address: document.getElementById('reg-address').value,
+            xp: 0
+        };
+        if(!data.phone || !data.district) return alert("সব তথ্য দিন");
+        await setDoc(doc(db, "users", auth.currentUser.uid), data);
+        location.reload();
     };
 
-    document.getElementById('save-profile').onclick = async () => {
-        await updateDoc(doc(db, "users", auth.currentUser.uid), {
-            name: document.getElementById('edit-name').value,
-            bio: document.getElementById('edit-bio').value
+    function setupApp(user, data) {
+        document.getElementById('login-section').classList.add('hidden');
+        document.getElementById('reg-modal').classList.add('hidden');
+        document.getElementById('main-header').classList.remove('hidden');
+        document.getElementById('app-content').classList.remove('hidden');
+        document.getElementById('bottom-nav').classList.remove('hidden');
+        
+        document.getElementById('top-user-name').innerText = data.name;
+        document.getElementById('top-user-xp').innerText = data.xp + ' XP';
+        document.getElementById('top-user-img').src = data.photo;
+        
+        initMap();
+        loadFeed();
+        loadLeaderboard();
+    }
+
+    // ৩. ম্যাপ ফাংশন
+    function initMap() {
+        if(!map) {
+            map = L.map('map').setView([23.8103, 90.4125], 7);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            L.marker([23.8103, 90.4125]).addTo(map).bindPopup('আপনি এখানে আছেন!').openPopup();
+        }
+    }
+
+    // ৪. এআই অ্যাসিস্ট্যান্ট লজিক
+    window.toggleAI = () => {
+        const win = document.getElementById('ai-chat-window');
+        win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+    };
+
+    window.askAI = () => {
+        const input = document.getElementById('ai-input');
+        const box = document.getElementById('ai-messages');
+        if(!input.value) return;
+
+        box.innerHTML += `<p class="bg-gray-100 p-2 rounded-lg text-right"><b>আপনি:</b> ${input.value}</p>`;
+        
+        // ডামি এআই রেসপন্স (পরবর্তীতে API যোগ করা যাবে)
+        setTimeout(() => {
+            let reply = "পরিবেশ রক্ষায় আপনার উদ্যোগ দারুণ! আরও গাছ লাগান এবং প্লাস্টিক বর্জন করুন।";
+            if(input.value.includes("গাছ")) reply = "আপনি এখন নিম বা আম গাছ লাগাতে পারেন, এটি আমাদের পরিবেশের জন্য খুব উপকারী।";
+            box.innerHTML += `<p class="bg-green-100 p-2 rounded-lg"><b>এআই:</b> ${reply}</p>`;
+            input.value = "";
+            box.scrollTop = box.scrollHeight;
+        }, 1000);
+    };
+
+    // ৫. এক্সপি ও ফিড লোড
+    window.addXP = async (amt) => {
+        await updateDoc(doc(db, "users", auth.currentUser.uid), { xp: increment(amt) });
+        alert(`${amt} XP যোগ হয়েছে!`);
+    };
+
+    function loadFeed() {
+        onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), (snap) => {
+            let h = "";
+            snap.forEach(d => {
+                const p = d.data();
+                h += `<div class="bg-white p-5 rounded-3xl shadow-sm border mb-4">
+                        <div class="flex items-center gap-3 mb-2"><img src="${p.userPhoto}" class="w-10 h-10 rounded-full"><b>${p.userName}</b></div>
+                        <p>${p.text}</p></div>`;
+            });
+            document.getElementById('feed-container').innerHTML = h;
         });
-        alert("প্রোফাইল আপডেট হয়েছে!");
+    }
+
+    function loadLeaderboard() {
+        onSnapshot(query(collection(db, "users"), orderBy("xp", "desc")), (snap) => {
+            let h = "";
+            let r = 1;
+            snap.forEach(d => {
+                const u = d.data();
+                h += `<div class="flex justify-between p-4 border-b"><span>${r++}. ${u.name}</span><b class="text-green-600">${u.xp} XP</b></div>`;
+            });
+            document.getElementById('leaderboard-list').innerHTML = h;
+        });
+    }
+
+    window.switchTab = (t) => {
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
+        document.getElementById('tab-'+t).classList.add('active-tab');
+        document.getElementById('tab-title').innerText = t === 'rank' ? 'লিডারবোর্ড' : t;
+        if(t === 'map') setTimeout(() => map.invalidateSize(), 400);
     };
 </script>
 </body>
-</html>
+    </html>
