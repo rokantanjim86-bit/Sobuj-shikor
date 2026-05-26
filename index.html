@@ -3,148 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>সবুজ শিখর | Premium Edition</title>
+    <title>সবুজ শিখর - প্রো এডিশন</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
     <style>
-        :root { --primary: #059669; --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #e1f1e7 100%); }
-        body { font-family: 'Hind Siliguri', sans-serif; background: var(--bg-gradient); color: #1e293b; overflow-x: hidden; }
-        .premium-glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05); }
+        body { font-family: 'Hind Siliguri', sans-serif; background: #f0f4f8; }
+        .premium-card { background: white; border-radius: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .tab-content { display: none; }
-        .active-tab { display: block; animation: fadeInUp 0.5s ease; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        #side-menu { transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); transform: translateX(100%); }
-        #side-menu.open { transform: translateX(0); }
-        #map { height: 400px; border-radius: 2rem; border: 4px solid white; z-index: 10; }
-        .nav-active { color: var(--primary); transform: translateY(-3px); font-weight: bold; }
-        .ai-bubble { animation: popIn 0.3s ease; }
-        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .active-tab { display: block; }
+        .loading-spinner { border: 3px solid #f3f3f3; border-top: 3px solid #059669; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen pb-28">
+<body class="pb-24">
 
-    <section id="login-screen" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-green-900/20 backdrop-blur-md hidden">
-        <div class="premium-glass max-w-lg w-full p-8 rounded-[2.5rem] shadow-2xl text-center">
-            <div class="text-5xl mb-4">🍃</div>
-            <h1 class="text-3xl font-black text-green-900 mb-2">সবুজ শিখর</h1>
-            <p class="text-green-700 mb-8 font-medium italic">"প্রকৃতির বন্ধু হয়ে উঠুন"</p>
-            
-            <div class="space-y-4">
-                <input id="reg-name" type="text" placeholder="পূর্ণ নাম" class="w-full p-4 rounded-2xl border-none outline-none shadow-inner bg-white/50">
-                <div class="grid grid-cols-2 gap-3">
-                    <input id="reg-job" type="text" placeholder="পেশা" class="w-full p-4 rounded-2xl border-none outline-none shadow-inner bg-white/50">
-                    <input id="reg-phone" type="tel" placeholder="ফোন নম্বর" class="w-full p-4 rounded-2xl border-none outline-none shadow-inner bg-white/50">
-                </div>
-                <button id="google-login-btn" class="w-full bg-white text-gray-700 py-4 rounded-2xl font-bold shadow-lg flex items-center justify-center gap-3 border border-gray-100">
-                    <img src="https://www.svgrepo.com/show/355037/google.svg" class="w-6 h-6"> গুগল দিয়ে শুরু করুন
-                </button>
-                <button id="save-info-btn" class="w-full bg-green-700 text-white py-4 rounded-2xl font-bold shadow-xl mt-2">তথ্য জমা দিন</button>
+    <section id="auth-screen" class="fixed inset-0 z-[200] bg-white flex items-center justify-center p-6 hidden">
+        <div class="w-full max-w-md space-y-6 text-center">
+            <h1 class="text-4xl font-black text-green-700">সবুজ শিখর</h1>
+            <p class="text-gray-500">লগইন বা একাউন্ট তৈরি করুন</p>
+            <input id="auth-email" type="email" placeholder="ইমেল" class="w-full p-4 bg-gray-100 rounded-2xl outline-none">
+            <input id="auth-pass" type="password" placeholder="পাসওয়ার্ড" class="w-full p-4 bg-gray-100 rounded-2xl outline-none">
+            <div class="flex gap-2">
+                <button id="btn-login" class="flex-1 bg-green-600 text-white py-4 rounded-2xl font-bold">লগইন</button>
+                <button id="btn-signup" class="flex-1 border-2 border-green-600 text-green-600 py-4 rounded-2xl font-bold">রেজিস্ট্রার</button>
             </div>
+            <button id="btn-google" class="w-full py-4 border rounded-2xl flex items-center justify-center gap-2"><img src="https://www.svgrepo.com/show/355037/google.svg" class="w-5"> গুগল</button>
         </div>
     </section>
 
-    <header id="app-header" class="hidden premium-glass sticky top-0 z-[100] px-6 py-4 flex justify-between items-center rounded-b-3xl">
-        <div class="flex items-center gap-2">
-            <span class="text-2xl">🌱</span>
-            <span id="header-title" class="text-xl font-bold text-green-800">হোম</span>
-        </div>
-        <div class="flex items-center gap-4">
-            <span id="xp-badge" class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold">0 XP</span>
-            <button onclick="toggleMenu()" class="text-2xl text-green-800"><i class="fa-solid fa-bars-staggered"></i></button>
+    <header id="main-header" class="sticky top-0 bg-white/90 backdrop-blur p-4 flex justify-between items-center z-50 border-b">
+        <div class="flex items-center gap-2 font-bold text-green-700 text-xl">🌱 সবুজ শিখর</div>
+        <div class="flex items-center gap-3">
+            <div class="text-xs font-bold bg-green-100 text-green-700 px-3 py-1 rounded-full"><span id="user-xp">0</span> XP</div>
+            <img id="header-img" src="" class="w-10 h-10 rounded-full border cursor-pointer" onclick="switchTab('profile')">
         </div>
     </header>
 
-    <div id="side-menu" class="fixed inset-y-0 right-0 w-72 premium-glass z-[150] p-8 rounded-l-[2rem]">
-        <button onclick="toggleMenu()" class="text-2xl mb-8"><i class="fa-solid fa-xmark"></i></button>
-        <div class="text-center mb-8">
-            <img id="menu-user-img" src="" class="w-20 h-20 rounded-2xl mx-auto shadow-lg border-2 border-white">
-            <h3 id="menu-user-name" class="mt-3 font-bold text-lg text-gray-800">ব্যবহারকারী</h3>
-        </div>
-        <nav class="space-y-4">
-            <button class="w-full text-left p-3 rounded-xl hover:bg-green-50 flex items-center gap-3 font-medium text-gray-600"><i class="fa-solid fa-circle-user"></i> প্রোফাইল</button>
-            <button class="w-full text-left p-3 rounded-xl hover:bg-green-50 flex items-center gap-3 font-medium text-gray-600"><i class="fa-solid fa-gear"></i> সেটিংস</button>
-            <hr class="border-gray-100">
-            <button id="logout-btn" class="w-full text-left p-3 rounded-xl text-red-500 flex items-center gap-3 font-bold"><i class="fa-solid fa-right-from-bracket"></i> লগ আউট</button>
-        </nav>
-    </div>
-
-    <main id="app-main" class="hidden container mx-auto max-w-2xl px-5 pt-6">
+    <main class="max-w-md mx-auto p-4 space-y-6">
         
-        <div id="tab-home" class="tab-content active-tab">
-            <div class="premium-glass p-6 rounded-[2rem] shadow-sm mb-6 border border-white">
-                <textarea id="post-input" class="w-full bg-transparent border-none outline-none text-lg min-h-[60px]" placeholder="পরিবেশ রক্ষায় আজ কী করলেন?"></textarea>
-                <button id="post-submit" class="w-full bg-green-600 text-white mt-4 py-3 rounded-2xl font-bold shadow-lg shadow-green-200 active:scale-95 transition">শেয়ার করুন</button>
-            </div>
-            <div id="feed" class="space-y-6"></div>
-        </div>
-
-        <div id="tab-map" class="tab-content">
-            <h2 class="text-2xl font-black mb-6 text-center">সবুজ ম্যাপ 🌍</h2>
-            <div id="map"></div>
-            <p class="text-center text-xs text-gray-500 mt-4">আপনার এলাকার সবুজ যোদ্ধাদের অবস্থান দেখুন</p>
-        </div>
-
-        <div id="tab-missions" class="tab-content">
-            <h2 class="text-2xl font-black mb-6">মিশনসমূহ 🛠️</h2>
-            <div class="space-y-4">
-                <div class="premium-glass p-5 rounded-3xl flex justify-between items-center">
-                    <div><h3 class="font-bold">গাছ লাগানো</h3><p class="text-xs text-green-600">+৫০ XP</p></div>
-                    <button onclick="addXP(50)" class="bg-green-600 text-white px-6 py-2 rounded-xl font-bold">সম্পন্ন</button>
+        <div id="tab-home" class="tab-content active-tab space-y-4">
+            <div class="premium-card p-5 space-y-4">
+                <textarea id="post-desc" class="w-full h-24 p-3 bg-gray-50 rounded-xl outline-none text-sm" placeholder="আজকের ভালো কাজের বর্ণনা দিন (পয়েন্ট পেতে ছবি ও ২০+ শব্দ বাধ্যতামূলক)..."></textarea>
+                <div class="flex items-center justify-between">
+                    <label class="cursor-pointer text-green-600 text-sm font-bold flex items-center gap-1">
+                        <i class="fa-solid fa-camera"></i> ছবি দিন
+                        <input type="file" id="post-file" class="hidden" accept="image/*">
+                    </label>
+                    <button id="btn-share" class="bg-green-700 text-white px-6 py-2 rounded-xl font-bold text-sm">শেয়ার করুন</button>
                 </div>
+                <p id="limit-msg" class="text-red-500 text-[10px] hidden">আপনি আজ ৫টি পোস্ট করে ফেলেছেন। আগামীকাল আবার চেষ্টা করুন!</p>
             </div>
+            <div id="feed" class="space-y-4"></div>
         </div>
 
-        <div id="tab-rank" class="tab-content">
-            <h2 class="text-2xl font-black mb-6 text-center">লিডারবোর্ড 🏆</h2>
-            <div id="leaderboard" class="premium-glass rounded-3xl overflow-hidden border border-white"></div>
+        <div id="tab-profile" class="tab-content space-y-5">
+            <div class="premium-card p-6 text-center space-y-3">
+                <img id="prof-pic" src="" class="w-24 h-24 rounded-3xl mx-auto shadow-lg border-4 border-white">
+                <h2 id="prof-name" class="text-xl font-bold">লোড হচ্ছে...</h2>
+                <p id="prof-bio" class="text-gray-500 text-sm italic">"গাছ লাগান পরিবেশ বাঁচান"</p>
+            </div>
+            <div class="premium-card p-6 space-y-4">
+                <h3 class="font-bold text-gray-700">প্রোফাইল সেটিংস</h3>
+                <input id="edit-name" type="text" placeholder="নতুন নাম" class="w-full p-3 bg-gray-50 rounded-xl outline-none">
+                <textarea id="edit-bio" placeholder="আপনার বায়ো" class="w-full p-3 bg-gray-50 rounded-xl outline-none h-20"></textarea>
+                <button id="btn-update" class="w-full bg-green-700 text-white py-3 rounded-xl font-bold">সংরক্ষণ করুন</button>
+                <button id="btn-logout" class="w-full text-red-500 font-bold mt-4">লগ আউট</button>
+            </div>
         </div>
     </main>
 
-    <div id="ai-chat" class="fixed bottom-24 right-6 z-[120]">
-        <div id="ai-window" class="hidden premium-glass w-80 h-[450px] mb-4 rounded-[2rem] shadow-2xl flex flex-col overflow-hidden border border-white">
-            <div class="bg-green-700 text-white p-4 font-bold flex justify-between items-center shadow-md">
-                <span class="flex items-center gap-2">🤖 সবুজ বন্ধু AI</span>
-                <button onclick="toggleAI()"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="chat-box" class="flex-1 p-4 overflow-y-auto space-y-3 bg-white/30 scroll-smooth"></div>
-            <div class="p-3 bg-white/80 border-t flex gap-2 items-center">
-                <input id="ai-input" type="text" placeholder="জিজ্ঞেস করুন..." class="flex-1 p-3 rounded-xl border-none bg-gray-100 outline-none text-sm">
-                <button id="ai-btn" class="bg-green-700 text-white w-10 h-10 rounded-xl flex items-center justify-center shadow-lg"><i class="fa-solid fa-paper-plane"></i></button>
-            </div>
-        </div>
-        <button onclick="toggleAI()" class="bg-green-700 w-14 h-14 rounded-2xl shadow-2xl flex items-center justify-center text-2xl text-white animate-bounce">🤖</button>
-    </div>
-
-    <nav id="bottom-nav" class="hidden fixed bottom-6 inset-x-6 premium-glass h-20 rounded-[2rem] flex justify-around items-center px-4 z-[90] shadow-2xl border border-white">
-        <button onclick="switchTab('home')" class="nav-btn nav-active flex flex-col items-center gap-1" id="btn-home">
-            <i class="fa-solid fa-house"></i><span class="text-[10px]">হোম</span>
-        </button>
-        <button onclick="switchTab('map')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-map">
-            <i class="fa-solid fa-map"></i><span class="text-[10px]">ম্যাপ</span>
-        </button>
-        <button onclick="switchTab('missions')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-missions">
-            <i class="fa-solid fa-bolt"></i><span class="text-[10px]">মিশন</span>
-        </button>
-        <button onclick="switchTab('rank')" class="nav-btn flex flex-col items-center gap-1 text-gray-400" id="btn-rank">
-            <i class="fa-solid fa-crown"></i><span class="text-[10px]">র‍্যাঙ্ক</span>
-        </button>
+    <nav class="fixed bottom-6 inset-x-6 h-16 bg-white shadow-2xl rounded-2xl flex justify-around items-center border z-50">
+        <button onclick="switchTab('home')" class="text-green-600"><i class="fa-solid fa-home text-xl"></i></button>
+        <button onclick="switchTab('profile')" class="text-gray-400"><i class="fa-solid fa-user-gear text-xl"></i></button>
     </nav>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, onSnapshot, query, orderBy, where, getDocs, increment, Timestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // ১. আপনার ফায়ারবেস কনফিগারেশন
+        // ফায়ারবেস কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyAPFw8UVunLn_ob9zuaY-0unZyiA0bED70",
             authDomain: "sobuj-shikhor-1.firebaseapp.com",
             projectId: "sobuj-shikhor-1",
-            storageBucket: "sobuj-shikhor-1.firebasestorage.app",
+            storageBucket: "sobuj-shikhor-1.appspot.com",
             messagingSenderId: "582453210412",
             appId: "1:582453210412:web:da5e0188977f8d82ab5089"
         };
@@ -153,135 +96,127 @@
         const auth = getAuth();
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
-        let map;
 
-        // ২. আপনার দেওয়া জেমিনি এপিআই কী (সরাসরি বসানো হয়েছে)
-        const GEMINI_KEY = "AIzaSyB6lRD9MW7p0cruCKW7w1179CblDhpanS4";
-
+        // ১. অথেনটিকেশন চেক
         onAuthStateChanged(auth, async (user) => {
             if (user) {
-                const snap = await getDoc(doc(db, "users", user.uid));
-                if (snap.exists() && snap.data().phone) showApp(user, snap.data());
-                else document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('auth-screen').classList.add('hidden');
+                const userRef = doc(db, "users", user.uid);
+                const snap = await getDoc(userRef);
+                if (!snap.exists()) {
+                    await setDoc(userRef, { name: user.displayName || "ইউজার", bio: "সবুজ যোদ্ধা", xp: 0, photo: user.photoURL || "https://via.placeholder.com/100" });
+                }
+                updateProfileUI(user.uid);
+                loadFeed();
             } else {
-                document.getElementById('login-screen').classList.remove('hidden');
+                document.getElementById('auth-screen').classList.remove('hidden');
             }
         });
 
-        document.getElementById('google-login-btn').onclick = () => signInWithPopup(auth, provider);
-        document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => location.reload());
+        // ২. লগইন/রেজিস্ট্রেশন বাটন
+        document.getElementById('btn-signup').onclick = () => {
+            createUserWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-pass').value).catch(e => alert(e.message));
+        };
+        document.getElementById('btn-login').onclick = () => {
+            signInWithEmailAndPassword(auth, document.getElementById('auth-email').value, document.getElementById('auth-pass').value).catch(e => alert("ভুল ইমেল বা পাসওয়ার্ড!"));
+        };
+        document.getElementById('btn-google').onclick = () => signInWithPopup(auth, provider);
+        document.getElementById('btn-logout').onclick = () => signOut(auth).then(() => location.reload());
 
-        document.getElementById('save-info-btn').onclick = async () => {
-            const data = {
-                name: document.getElementById('reg-name').value,
-                job: document.getElementById('reg-job').value,
-                phone: document.getElementById('reg-phone').value,
-                xp: 0, photo: auth.currentUser.photoURL
-            };
-            if(!data.phone || !data.name) return alert("তথ্য পূরণ করুন!");
-            await setDoc(doc(db, "users", auth.currentUser.uid), data);
-            location.reload();
+        // ৩. ৫টি পোস্ট লিমিট এবং জিপিএস ট্র্যাকিং
+        document.getElementById('btn-share').onclick = async () => {
+            const desc = document.getElementById('post-desc').value;
+            const file = document.getElementById('post-file').files[0];
+            const btn = document.getElementById('btn-share');
+
+            if (desc.length < 20 || !file) return alert("পয়েন্ট পেতে ছবি এবং বিস্তারিত বর্ণনা দিন!");
+
+            btn.disabled = true;
+            btn.innerText = "যাচাই হচ্ছে...";
+
+            // গত ২৪ ঘণ্টায় কয়টি পোস্ট হয়েছে চেক করা
+            const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            const q = query(collection(db, "posts"), where("uid", "==", auth.currentUser.uid), where("time", ">", oneDayAgo));
+            const querySnap = await getDocs(q);
+
+            if (querySnap.size >= 5) {
+                alert("আপনি ২৪ ঘণ্টায় সর্বোচ্চ ৫টি পোস্ট করতে পারবেন!");
+                btn.disabled = false;
+                btn.innerText = "শেয়ার করুন";
+                return;
+            }
+
+            // জিপিএস লোকেশন সংগ্রহ
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+                const { latitude, longitude } = pos.coords;
+
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    await addDoc(collection(db, "posts"), {
+                        uid: auth.currentUser.uid,
+                        name: auth.currentUser.displayName || "ইউজার",
+                        photo: auth.currentUser.photoURL,
+                        text: desc,
+                        image: e.target.result,
+                        location: { lat: latitude, lng: longitude },
+                        time: Timestamp.now()
+                    });
+
+                    await updateDoc(doc(db, "users", auth.currentUser.uid), { xp: increment(50) });
+                    alert("সফল! আপনি ৫০ XP পেয়েছেন।");
+                    location.reload();
+                };
+                reader.readAsDataURL(file);
+            }, () => {
+                alert("লোকেশন অন করুন!");
+                btn.disabled = false;
+            });
         };
 
-        function showApp(user, data) {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('app-header').classList.remove('hidden');
-            document.getElementById('app-main').classList.remove('hidden');
-            document.getElementById('bottom-nav').classList.remove('hidden');
-            document.getElementById('menu-user-img').src = data.photo;
-            document.getElementById('menu-user-name').innerText = data.name;
-            document.getElementById('xp-badge').innerText = (data.xp || 0) + " XP";
-            initMap(); loadFeed(); loadRank();
+        // প্রোফাইল আপডেট
+        function updateProfileUI(uid) {
+            onSnapshot(doc(db, "users", uid), (d) => {
+                const data = d.data();
+                document.getElementById('user-xp').innerText = data.xp;
+                document.getElementById('header-img').src = data.photo;
+                document.getElementById('prof-pic').src = data.photo;
+                document.getElementById('prof-name').innerText = data.name;
+                document.getElementById('prof-bio').innerText = data.bio;
+            });
         }
 
-        window.toggleMenu = () => document.getElementById('side-menu').classList.toggle('open');
-        window.toggleAI = () => document.getElementById('ai-window').classList.toggle('hidden');
+        document.getElementById('btn-update').onclick = async () => {
+            const up = {};
+            if(document.getElementById('edit-name').value) up.name = document.getElementById('edit-name').value;
+            if(document.getElementById('edit-bio').value) up.bio = document.getElementById('edit-bio').value;
+            await updateDoc(doc(db, "users", auth.currentUser.uid), up);
+            alert("আপডেট হয়েছে!");
+        };
 
-        window.switchTab = (tab) => {
+        window.switchTab = (t) => {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
-            document.getElementById('tab-' + tab).classList.add('active-tab');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('nav-active', 'text-green-800'));
-            document.getElementById('btn-' + tab).classList.add('nav-active');
-            if(tab === 'map') setTimeout(() => map.invalidateSize(), 300);
+            document.getElementById('tab-' + t).classList.add('active-tab');
         };
-
-        // জেমিনি এআই চ্যাট লজিক
-        document.getElementById('ai-btn').onclick = async () => {
-            const inputField = document.getElementById('ai-input');
-            const input = inputField.value.trim();
-            const box = document.getElementById('chat-box');
-            if(!input) return;
-
-            box.innerHTML += `<div class="flex justify-end"><div class="bg-green-600 text-white p-3 rounded-2xl rounded-tr-none text-sm max-w-[85%]">${input}</div></div>`;
-            inputField.value = "";
-            box.scrollTop = box.scrollHeight;
-
-            const loading = document.createElement('div');
-            loading.innerHTML = `<div class="bg-gray-100 p-2 rounded-xl text-xs w-fit animate-pulse">সবুজ বন্ধু ভাবছে...</div>`;
-            box.appendChild(loading);
-
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
-                    method: "POST", headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({contents: [{parts: [{text: `You are 'Sobuj Bondhu', an eco-assistant. Respond in Bengali: ${input}`}]}]})
-                });
-                const d = await res.json();
-                loading.remove();
-                const reply = d.candidates[0].content.parts[0].text;
-                box.innerHTML += `<div class="flex justify-start"><div class="bg-white border p-3 rounded-2xl rounded-tl-none text-sm text-gray-800 shadow-sm max-w-[85%]"><b>🌿 বন্ধু:</b> ${reply}</div></div>`;
-            } catch(e) {
-                loading.innerHTML = `<div class="text-red-400 text-[10px]">ত্রুটি! আবার চেষ্টা করুন।</div>`;
-            }
-            box.scrollTop = box.scrollHeight;
-        };
-
-        function initMap() {
-            if(!map) {
-                map = L.map('map').setView([23.8103, 90.4125], 7);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-                navigator.geolocation.getCurrentPosition(p => map.setView([p.coords.latitude, p.coords.longitude], 13));
-            }
-        }
 
         function loadFeed() {
-            onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
-                let html = "";
-                snap.forEach(d => {
-                    const p = d.data();
-                    html += `<div class="premium-glass p-5 rounded-[2rem] shadow-sm border border-white">
-                        <div class="flex items-center gap-2 mb-3"><img src="${p.userPhoto}" class="w-8 h-8 rounded-full border"><b>${p.userName}</b></div>
-                        <p class="text-gray-700 text-sm leading-relaxed">${p.text}</p>
-                    </div>`;
+            onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), (snap) => {
+                let h = "";
+                snap.forEach(doc => {
+                    const p = doc.data();
+                    h += `
+                        <div class="premium-card p-4 space-y-3">
+                            <div class="flex items-center gap-2">
+                                <img src="${p.photo}" class="w-8 h-8 rounded-full">
+                                <b class="text-sm">${p.name}</b>
+                                <span class="text-[9px] text-gray-400 italic">${p.location ? '📍 Tracked' : ''}</span>
+                            </div>
+                            <p class="text-sm text-gray-700">${p.text}</p>
+                            <img src="${p.image}" class="w-full rounded-2xl h-48 object-cover shadow-inner">
+                        </div>`;
                 });
-                document.getElementById('feed').innerHTML = html;
+                document.getElementById('feed').innerHTML = h;
             });
         }
-
-        document.getElementById('post-submit').onclick = async () => {
-            const el = document.getElementById('post-input');
-            if(!el.value) return;
-            await addDoc(collection(db, "posts"), { userName: auth.currentUser.displayName, userPhoto: auth.currentUser.photoURL, text: el.value, time: new Date() });
-            el.value = "";
-        };
-
-        function loadRank() {
-            onSnapshot(query(collection(db, "users"), orderBy("xp", "desc")), snap => {
-                let html = "";
-                snap.forEach(d => {
-                    const u = d.data();
-                    html += `<div class="flex justify-between items-center p-4 border-b border-white/50 text-sm">
-                        <div class="flex items-center gap-3"><img src="${u.photo}" class="w-8 h-8 rounded-full border"><span>${u.name}</span></div>
-                        <b class="text-green-700">${u.xp} XP</b>
-                    </div>`;
-                });
-                document.getElementById('leaderboard').innerHTML = html;
-            });
-        }
-
-        window.addXP = async (amt) => {
-            await updateDoc(doc(db, "users", auth.currentUser.uid), { xp: increment(amt) });
-            alert("চমৎকার! " + amt + " XP পেলেন!");
-        };
     </script>
 </body>
 </html>
