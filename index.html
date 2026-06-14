@@ -3,109 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>সবুজ শিখর | Ultimate Eco-Social</title>
+    <title>সবুজ শিখর | Premium Eco-Social</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
     <style>
-        :root { --main-bg: #f3f7f6; --card-bg: #ffffff; --text-color: #1f2937; }
-        .dark-mode { --main-bg: #111827; --card-bg: #1f2937; --text-color: #f9fafb; }
-        body { font-family: 'Hind Siliguri', sans-serif; background: var(--main-bg); color: var(--text-color); transition: 0.3s; }
+        body { 
+            font-family: 'Hind Siliguri', sans-serif; 
+            background-color: #0d1117; 
+            color: #c9d1d9;
+        }
+        .premium-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 1.25rem;
+            transition: all 0.3s ease;
+        }
+        .premium-card:hover {
+            transform: translateY(-2px);
+            border-color: #238636;
+            box-shadow: 0 0 15px rgba(35, 134, 54, 0.3);
+        }
         .tab-content { display: none; }
-        .active-tab { display: block; animation: fadeIn 0.4s; }
+        .active-tab { display: block; animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .nav-glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
-        .dark-mode .nav-glass { background: rgba(31, 41, 55, 0.8); }
+        #map { width: 100%; height: 100%; border-radius: 1.25rem; }
+        .auth-tab { display: none; }
+        .auth-tab.active { display: block; }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-28">
 
-    <section id="auth-screen" class="fixed inset-0 z-[200] bg-green-50 flex items-center justify-center p-6">
-        <div class="bg-white p-8 rounded-[2.5rem] shadow-2xl text-center max-w-sm w-full space-y-6">
-            <h1 class="text-3xl font-black text-green-700">🌱 সবুজ শিখর</h1>
-            <p class="text-gray-500">পরিবেশ রক্ষায় আপনার যাত্রা শুরু হোক এখান থেকে</p>
-            <button id="btn-google" class="w-full flex items-center justify-center gap-3 bg-white border-2 border-gray-100 py-4 rounded-2xl font-bold hover:bg-gray-50 transition">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="20"> Google দিয়ে লগইন
-            </button>
+    <section id="auth-screen" class="fixed inset-0 z-[200] bg-[#0d1117] flex items-center justify-center p-6 overflow-y-auto">
+        <div class="bg-[#161b22] p-8 rounded-[2rem] border border-[#30363d] text-center max-w-sm w-full space-y-6">
+            <h1 class="text-3xl font-black text-[#2ea44f]">🌱 সবুজ শিখর</h1>
+            
+            <div class="flex border-b border-[#30363d] text-sm">
+                <button id="tab-login-btn" onclick="toggleAuthTab('login')" class="flex-1 pb-2 border-b-2 border-[#2ea44f] text-white font-bold">লগইন</button>
+                <button id="tab-reg-btn" onclick="toggleAuthTab('reg')" class="flex-1 pb-2 border-b-2 border-transparent text-gray-400 font-bold">রেজিস্ট্রেশন</button>
+            </div>
+
+            <div id="auth-login-tab" class="auth-tab active space-y-4">
+                <p class="text-gray-400 text-xs">আপনার অ্যাকাউন্টে প্রবেশ করুন</p>
+                <button id="btn-google-login" class="w-full flex items-center justify-center gap-3 bg-[#21262d] border border-[#30363d] py-3 rounded-xl font-bold hover:bg-[#30363d] text-white transition text-sm">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18"> Google দিয়ে লগইন
+                </button>
+                <button onclick="alert('ফোন নম্বর লগইন ফিচারটি শীঘ্রই আসছে!')" class="w-full flex items-center justify-center gap-3 bg-[#21262d] border border-[#30363d] py-3 rounded-xl font-bold hover:bg-[#30363d] text-white transition text-sm">
+                    <i class="fa-solid fa-phone text-[#2ea44f]"></i> ফোন নম্বর দিয়ে লগইন
+                </button>
+            </div>
+
+            <div id="auth-reg-tab" class="auth-tab space-y-4">
+                <p class="text-gray-400 text-xs">নতুন একাউন্ট খুলতে নিচের তথ্যগুলো দিন</p>
+                
+                <div class="space-y-3 text-left">
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1">নির্ধারিত রেজিস্ট্রেশন কোড *</label>
+                        <input id="reg-code" type="text" placeholder="কোডটি এখানে লিখুন" class="w-full p-3 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-sm outline-none focus:border-[#2ea44f]">
+                    </div>
+                </div>
+
+                <button id="btn-google-reg" class="w-full flex items-center justify-center gap-3 bg-[#238636] hover:bg-[#2ea44f] py-3 rounded-xl font-bold text-white transition text-sm shadow-lg">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18" class="bg-white rounded-full p-0.5"> কোড যাচাই ও Google দিয়ে সাইন-আপ
+                </button>
+                <button onclick="alert('ফোন নম্বর রেজিস্ট্রেশন ফিচারটি শীঘ্রই আসছে!')" class="w-full flex items-center justify-center gap-3 bg-[#21262d] border border-[#30363d] py-3 rounded-xl font-bold hover:bg-[#30363d] text-white transition text-sm">
+                    <i class="fa-solid fa-phone text-[#2ea44f]"></i> ফোন নম্বর দিয়ে রেজিস্ট্রেশন
+                </button>
+            </div>
+
         </div>
     </section>
 
     <div id="app-content" class="hidden">
-        <header class="sticky top-0 z-50 nav-glass p-4 flex justify-between items-center border-b">
-            <h2 class="font-bold text-green-600 text-xl">সবুজ শিখর</h2>
+        <header class="sticky top-0 z-50 bg-[#161b22]/90 backdrop-blur-md p-4 flex justify-between items-center border-b border-[#30363d]">
+            <h2 class="font-bold text-[#2ea44f] text-xl tracking-wide">🌱 সবুজ শিখর</h2>
             <div class="flex items-center gap-3">
-                <button onclick="toggleDark()" class="text-xl">🌓</button>
-                <div class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold"><span id="u-xp">0</span> XP</div>
-                <img id="u-img" class="w-10 h-10 rounded-full border-2 border-green-500 cursor-pointer" onclick="switchTab('profile')">
+                <div class="bg-[#238636]/20 text-[#2ea44f] border border-[#238636]/40 px-3 py-1 rounded-full text-xs font-bold"><span id="u-xp">0</span> XP</div>
+                <img id="u-img" class="w-10 h-10 rounded-full border-2 border-[#2ea44f] cursor-pointer" onclick="switchTab('profile')">
             </div>
         </header>
 
         <main class="max-w-md mx-auto p-4 space-y-5">
-            <div id="tab-home" class="tab-content active-tab space-y-4">
-                <div class="bg-[var(--card-bg)] p-5 rounded-3xl shadow-sm border border-white/50 space-y-4">
-                    <textarea id="p-desc" class="w-full h-24 p-3 bg-gray-50 rounded-2xl outline-none text-black" placeholder="পরিবেশ রক্ষায় আজ কী করলেন? (২০+ শব্দ বাধ্যতামূলক)"></textarea>
-                    <div class="flex items-center justify-between">
-                        <label class="cursor-pointer text-green-600 font-bold text-sm flex items-center gap-2">
-                            <i class="fa-solid fa-camera"></i> ছবি দিন
-                            <input type="file" id="p-file" class="hidden" accept="image/*">
-                        </label>
-                        <button id="btn-post" class="bg-green-600 text-white px-8 py-2 rounded-xl font-bold shadow-lg">শেয়ার</button>
+            
+            <div id="tab-home" class="tab-content active-tab space-y-5">
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="premium-card p-4 flex flex-col items-center justify-center text-center cursor-pointer space-y-2">
+                        <div class="text-2xl text-green-400"><i class="fa-solid fa-seedling"></i></div>
+                        <span class="text-sm font-semibold text-gray-200">গাছ কেনাবেচা</span>
+                    </div>
+                    <div class="premium-card p-4 flex flex-col items-center justify-center text-center cursor-pointer space-y-2">
+                        <div class="text-2xl text-blue-400"><i class="fa-solid fa-book"></i></div>
+                        <span class="text-sm font-semibold text-gray-200">বই আদানপ্রদান</span>
+                    </div>
+                    <div class="premium-card p-4 flex flex-col items-center justify-center text-center cursor-pointer space-y-2">
+                        <div class="text-2xl text-amber-400"><i class="fa-solid fa-recycle"></i></div>
+                        <span class="text-sm font-semibold text-gray-200">পরিবেশবান্ধব কাজ</span>
+                    </div>
+                    <div class="premium-card p-4 flex flex-col items-center justify-center text-center cursor-pointer space-y-2" onclick="switchTab('map')">
+                        <div class="text-2xl text-red-400"><i class="fa-solid fa-map-pinned"></i></div>
+                        <span class="text-sm font-semibold text-gray-200">লাইভ গ্রিন ম্যাপ</span>
                     </div>
                 </div>
+
+                <div class="bg-[#161b22] p-4 rounded-2xl border border-[#30363d] space-y-3">
+                    <textarea id="p-desc" class="w-full h-20 p-3 bg-[#0d1117] rounded-xl outline-none border border-[#30363d] text-white placeholder-gray-500 text-sm" placeholder="পরিবেশ রক্ষায় আজ কী করলেন? (২০+ শব্দ বাধ্যতামূলক)"></textarea>
+                    <div class="flex items-center justify-between">
+                        <label class="cursor-pointer text-[#2ea44f] font-bold text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-camera text-base"></i> ছবি যুক্ত করুন
+                            <input type="file" id="p-file" class="hidden" accept="image/*">
+                        </label>
+                        <button id="btn-post" class="bg-[#238636] hover:bg-[#2ea44f] text-white px-6 py-2 rounded-xl text-xs font-bold transition">শেয়ার</button>
+                    </div>
+                </div>
+                
                 <div id="feed" class="space-y-4"></div>
             </div>
 
             <div id="tab-map" class="tab-content">
-                <div class="bg-[var(--card-bg)] p-2 rounded-3xl border h-96 overflow-hidden">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3651.90234131!2d90.3901783!3d23.7508826!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b89795690433%3A0x33621430032f6a73!2sBangladesh!5e0!3m2!1sen!2sbd!4v1716123456789" class="w-full h-full border-none"></iframe>
+                <div class="bg-[#161b22] p-2 rounded-2xl border border-[#30363d] h-96 overflow-hidden relative">
+                    <div id="map"></div>
                 </div>
             </div>
 
             <div id="tab-rank" class="tab-content">
-                <h3 class="text-center font-bold mb-4">সেরা সবুজ যোদ্ধা 🏆</h3>
-                <div id="leaderboard" class="bg-[var(--card-bg)] rounded-3xl border divide-y overflow-hidden"></div>
+                <h3 class="text-center font-bold mb-4 text-[#2ea44f]">সেরা সবুজ যোদ্ধা 🏆</h3>
+                <div id="leaderboard" class="bg-[#161b22] rounded-2xl border border-[#30363d] divide-y divide-[#30363d] overflow-hidden"></div>
             </div>
 
             <div id="tab-profile" class="tab-content space-y-4">
-                <div class="bg-[var(--card-bg)] p-8 rounded-3xl border text-center space-y-4">
-                    <img id="pr-img" class="w-24 h-24 rounded-full mx-auto border-4 border-green-500 shadow-xl">
-                    <h2 id="pr-name" class="text-2xl font-bold">নাম</h2>
-                    <p id="pr-bio" class="text-gray-500"></p>
+                <div class="bg-[#161b22] p-6 rounded-2xl border border-[#30363d] text-center space-y-3">
+                    <img id="pr-img" class="w-20 h-20 rounded-full mx-auto border-2 border-[#2ea44f] shadow-lg">
+                    <h2 id="pr-name" class="text-xl font-bold text-white">নাম</h2>
+                    <p id="pr-bio" class="text-gray-400 text-sm"></p>
                 </div>
-                <div class="bg-[var(--card-bg)] p-6 rounded-3xl border space-y-4">
-                    <h4 class="font-bold border-b pb-2">প্রোফাইল এডিট</h4>
-                    <input id="ed-name" type="text" placeholder="নতুন নাম" class="w-full p-3 bg-gray-50 text-black rounded-xl border">
-                    <input id="ed-bio" type="text" placeholder="আপনার বায়ো (পেশা)" class="w-full p-3 bg-gray-50 text-black rounded-xl border">
-                    <button id="btn-update" class="w-full bg-green-700 text-white py-3 rounded-xl font-bold shadow-md">সংরক্ষণ করুন</button>
-                    <button onclick="logout()" class="w-full text-red-500 font-bold py-2">লগ আউট</button>
+                <div class="bg-[#161b22] p-5 rounded-2xl border border-[#30363d] space-y-3">
+                    <h4 class="font-bold border-b border-[#30363d] pb-2 text-[#2ea44f] text-sm">প্রোফাইল এডিট</h4>
+                    <input id="ed-name" type="text" placeholder="নতুন নাম" class="w-full p-3 bg-[#0d1117] text-white rounded-xl border border-[#30363d] text-sm outline-none">
+                    <input id="ed-bio" type="text" placeholder="আপনার বায়ো" class="w-full p-3 bg-[#0d1117] text-white rounded-xl border border-[#30363d] text-sm outline-none">
+                    <button id="btn-update" class="w-full bg-[#238636] hover:bg-[#2ea44f] text-white py-3 rounded-xl text-sm font-bold transition shadow-md">সংরক্ষণ করুন</button>
+                    <button onclick="logout()" class="w-full text-red-400 text-sm font-bold pt-2">লগ আউট</button>
                 </div>
             </div>
         </main>
 
-        <button onclick="toggleAI()" class="fixed bottom-28 right-6 w-14 h-14 bg-green-600 text-white rounded-2xl shadow-2xl flex items-center justify-center text-2xl z-40 animate-bounce">🤖</button>
-        <div id="ai-box" class="fixed inset-x-6 bottom-28 h-96 bg-white rounded-3xl shadow-2xl border z-50 hidden flex flex-col overflow-hidden">
-            <div class="bg-green-600 p-4 text-white flex justify-between font-bold"><span>সবুজ বন্ধু AI</span><button onclick="toggleAI()">✕</button></div>
-            <div id="ai-chat" class="flex-1 p-4 overflow-y-auto space-y-2 text-sm text-black"></div>
-            <div class="p-3 border-t flex gap-2">
-                <input id="ai-in" type="text" placeholder="গাছ লাগানো নিয়ে কিছু জিজ্ঞেস করুন..." class="flex-1 bg-gray-100 p-2 rounded-xl outline-none text-black">
-                <button id="ai-send" class="bg-green-600 text-white px-4 rounded-xl"><i class="fa-solid fa-paper-plane"></i></button>
+        <button onclick="toggleAI()" class="fixed bottom-28 right-6 w-14 h-14 bg-[#238636] text-white rounded-full shadow-2xl flex items-center justify-center text-2xl z-40 animate-pulse">🤖</button>
+        
+        <div id="ai-box" class="fixed inset-x-6 bottom-28 h-96 bg-[#161b22] rounded-2xl border border-[#30363d] shadow-2xl z-50 hidden flex flex-col overflow-hidden">
+            <div class="bg-[#238636] p-4 text-white flex justify-between font-bold items-center text-sm">
+                <span>সবুজ বন্ধু AI 🍃</span>
+                <button onclick="toggleAI()" class="text-lg">✕</button>
+            </div>
+            <div id="ai-chat" class="flex-1 p-4 overflow-y-auto space-y-2 text-xs text-gray-200 bg-[#0d1117]"></div>
+            <div class="p-3 border-t border-[#30363d] flex gap-2 bg-[#161b22]">
+                <input id="ai-in" type="text" placeholder="গাছ বা পরিবেশ নিয়ে প্রশ্ন করুন..." class="flex-1 bg-[#0d1117] border border-[#30363d] text-white p-2 rounded-xl text-xs outline-none">
+                <button id="ai-send" class="bg-[#238636] hover:bg-[#2ea44f] text-white px-4 rounded-xl transition"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
 
-        <nav class="fixed bottom-6 inset-x-6 h-20 bg-[var(--card-bg)] shadow-2xl rounded-[2.5rem] border flex justify-around items-center z-50">
-            <button onclick="switchTab('home')" class="nav-btn text-green-600 flex flex-col items-center gap-1"><i class="fa-solid fa-home text-xl"></i><span class="text-[10px] font-bold">হোম</span></button>
-            <button onclick="switchTab('map')" class="nav-btn text-gray-400 flex flex-col items-center gap-1"><i class="fa-solid fa-map-location text-xl"></i><span class="text-[10px] font-bold">ম্যাপ</span></button>
-            <button onclick="switchTab('rank')" class="nav-btn text-gray-400 flex flex-col items-center gap-1"><i class="fa-solid fa-trophy text-xl"></i><span class="text-[10px] font-bold">র‍্যাঙ্ক</span></button>
-            <button onclick="switchTab('profile')" class="nav-btn text-gray-400 flex flex-col items-center gap-1"><i class="fa-solid fa-user-gear text-xl"></i><span class="text-[10px] font-bold">প্রোফাইল</span></button>
+        <nav class="fixed bottom-6 inset-x-6 h-18 bg-[#161b22]/90 backdrop-blur-md shadow-xl rounded-2xl border border-[#30363d] flex justify-around items-center z-50 p-2">
+            <button onclick="switchTab('home')" class="nav-btn text-[#2ea44f] flex flex-col items-center gap-1"><i class="fa-solid fa-house text-lg"></i><span class="text-[10px] font-bold">হোম</span></button>
+            <button onclick="switchTab('map')" class="nav-btn text-gray-500 flex flex-col items-center gap-1"><i class="fa-solid fa-map-location-dot text-lg"></i><span class="text-[10px] font-bold">ম্যাপ</span></button>
+            <button onclick="switchTab('rank')" class="nav-btn text-gray-500 flex flex-col items-center gap-1"><i class="fa-solid fa-trophy text-lg"></i><span class="text-[10px] font-bold">র‍্যাঙ্ক</span></button>
+            <button onclick="switchTab('profile')" class="nav-btn text-gray-500 flex flex-col items-center gap-1"><i class="fa-solid fa-user text-lg"></i><span class="text-[10px] font-bold">প্রোফাইল</span></button>
         </nav>
     </div>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, onSnapshot, query, orderBy, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // আপনার ফায়ারবেস কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyAPFw8UVunLn_ob9zuaY-0unZyiA0bED70",
             authDomain: "sobuj-shikhor-1.firebaseapp.com",
@@ -119,42 +189,89 @@
         const auth = getAuth();
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
-        const GEMINI_KEY = "AIzaSyB6lRD9MW7p0cruCKW7w1179CblDhpanS4"; // স্ক্রিনশট থেকে নেওয়া
+        const GEMINI_KEY = "AIzaSyB6lRD9MW7p0cruCKW7w1179CblDhpanS4";
+        
+        // নির্ধারিত রেজিস্ট্রেশন কোড
+        const VALID_REG_CODE = "GREEN2026"; 
 
-        // --- গুগল লগইন ---
-        document.getElementById('btn-google').onclick = () => {
+        let map, userMarker;
+
+        // --- Auth Tab Toggler ---
+        window.toggleAuthTab = (type) => {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(`auth-${type}-tab`).classList.add('active');
+            
+            if(type === 'login') {
+                document.getElementById('tab-login-btn').className = "flex-1 pb-2 border-b-2 border-[#2ea44f] text-white font-bold";
+                document.getElementById('tab-reg-btn').className = "flex-1 pb-2 border-b-2 border-transparent text-gray-400 font-bold";
+            } else {
+                document.getElementById('tab-reg-btn').className = "flex-1 pb-2 border-b-2 border-[#2ea44f] text-white font-bold";
+                document.getElementById('tab-login-btn').className = "flex-1 pb-2 border-b-2 border-transparent text-gray-400 font-bold";
+            }
+        }
+
+        // --- Google Login ---
+        document.getElementById('btn-google-login').onclick = () => {
             signInWithPopup(auth, provider).then(async (res) => {
                 const user = res.user;
                 const userRef = doc(db, "users", user.uid);
                 const snap = await getDoc(userRef);
                 if (!snap.exists()) {
-                    await setDoc(userRef, { name: user.displayName, bio: "আমি একজন সবুজ যোদ্ধা", xp: 110, photo: user.photoURL });
+                    alert("আপনার কোনো অ্যাকাউন্ট নেই! দয়া করে রেজিস্ট্রেশন করুন।");
+                    await signOut(auth);
                 }
-            });
+            }).catch(e => alert("লগইন ব্যর্থ হয়েছে!"));
+        };
+
+        // --- Google Registration with Validation Code ---
+        document.getElementById('btn-google-reg').onclick = () => {
+            const codeInput = document.getElementById('reg-code').value.trim();
+            if(codeInput !== VALID_REG_CODE) {
+                return alert("ভুল রেজিস্ট্রেশন কোড! সঠিক কোডটি দিন।");
+            }
+
+            signInWithPopup(auth, provider).then(async (res) => {
+                const user = res.user;
+                const userRef = doc(db, "users", user.uid);
+                const snap = await getDoc(userRef);
+                if (!snap.exists()) {
+                    await setDoc(userRef, { name: user.displayName, bio: "আমি একজন নতুন সবুজ যোদ্ধা", xp: 110, photo: user.photoURL });
+                    alert("রেজিস্ট্রেশন সফল হয়েছে!");
+                } else {
+                    alert("আপনার ইতিমধ্যে একটি অ্যাকাউন্ট আছে। লগইন করুন।");
+                }
+            }).catch(e => alert("রেজিস্ট্রেশন ব্যর্থ হয়েছে!"));
         };
 
         onAuthStateChanged(auth, user => {
             if (user) {
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('app-content').classList.remove('hidden');
-                loadUser(user.uid);
-                loadFeed();
-                loadRankings();
+                // চেক করা হচ্ছে ইউজারের ডাটাবেজে ফাইল আছে কি না (ভুল লগইন এড়াতে)
+                getDoc(doc(db, "users", user.uid)).then(snap => {
+                    if(snap.exists()){
+                        document.getElementById('auth-screen').style.display = 'none';
+                        document.getElementById('app-content').classList.remove('hidden');
+                        loadUser(user.uid);
+                        loadFeed();
+                        loadRankings();
+                        initMap();
+                    }
+                });
             } else {
                 document.getElementById('auth-screen').style.display = 'flex';
                 document.getElementById('app-content').classList.add('hidden');
             }
         });
 
-        // --- প্রোফাইল ডাটা লোড ও আপডেট ---
         function loadUser(uid) {
             onSnapshot(doc(db, "users", uid), d => {
-                const u = d.data();
-                document.getElementById('u-xp').innerText = u.xp;
-                document.getElementById('u-img').src = u.photo;
-                document.getElementById('pr-img').src = u.photo;
-                document.getElementById('pr-name').innerText = u.name;
-                document.getElementById('pr-bio').innerText = u.bio;
+                if(d.exists()) {
+                    const u = d.data();
+                    document.getElementById('u-xp').innerText = u.xp;
+                    document.getElementById('u-img').src = u.photo;
+                    document.getElementById('pr-img').src = u.photo;
+                    document.getElementById('pr-name').innerText = u.name;
+                    document.getElementById('pr-bio').innerText = u.bio;
+                }
             });
         }
 
@@ -166,27 +283,51 @@
             alert("প্রোফাইল আপডেট হয়েছে!");
         };
 
-        // --- এআই চ্যাট (Gemini) ---
+        // --- REAL-TIME MAP ---
+        function initMap() {
+            if (map) return; 
+            map = L.map('map').setView([23.8103, 90.4125], 13);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    map.setView([lat, lon], 15);
+                    if (userMarker) map.removeLayer(userMarker);
+                    userMarker = L.marker([lat, lon]).addTo(map).bindPopup('আপনার বর্তমান সবুজ জোন').openPopup();
+                }, () => {
+                    console.log("লোকেশন পারমিশন পাওয়া যায়নি।");
+                });
+            }
+        }
+
+        // --- AI CHAT (Gemini) ---
         window.toggleAI = () => document.getElementById('ai-box').classList.toggle('hidden');
         document.getElementById('ai-send').onclick = async () => {
             const inp = document.getElementById('ai-in').value;
             if(!inp) return;
             const chat = document.getElementById('ai-chat');
-            chat.innerHTML += `<p class='text-right'><b>আপনি:</b> ${inp}</p>`;
+            chat.innerHTML += `<div class='text-right mb-2'><span class='bg-[#238636] p-2 rounded-xl inline-block text-white'><b>আপনি:</b> ${inp}</span></div>`;
             document.getElementById('ai-in').value = "";
+            chat.scrollTop = chat.scrollHeight;
 
             try {
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
                     method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ contents: [{ parts: [{ text: inp + ". উত্তর খুব সংক্ষেপে এবং বাংলায় দাও।" }] }] })
                 });
                 const data = await res.json();
-                chat.innerHTML += `<p><b>বন্ধু:</b> ${data.candidates[0].content.parts[0].text}</p>`;
+                const aiReply = data.candidates[0].content.parts[0].text;
+                chat.innerHTML += `<div class='text-left mb-2'><span class='bg-[#30363d] p-2 rounded-xl inline-block text-gray-100'><b>বন্ধু:</b> ${aiReply}</span></div>`;
                 chat.scrollTop = chat.scrollHeight;
-            } catch (e) { alert("AI কানেকশন এরর!"); }
+            } catch (e) { 
+                chat.innerHTML += `<div class='text-left mb-2'><span class='bg-red-900/40 border border-red-500 p-2 rounded-xl inline-block text-red-200'>সংযোগ ত্রুটি!</span></div>`;
+            }
         };
 
-        // --- ছবি শেয়ার ও লাইক-কমেন্ট ---
+        // --- Feed & Posts ---
         document.getElementById('btn-post').onclick = async () => {
             const desc = document.getElementById('p-desc').value;
             const file = document.getElementById('p-file').files[0];
@@ -216,64 +357,37 @@
                 snap.forEach(d => {
                     const p = d.data();
                     html += `
-                    <div class="bg-[var(--card-bg)] p-4 rounded-3xl border space-y-3">
-                        <div class="flex items-center gap-2"><img src="${p.photo}" class="w-8 h-8 rounded-full"><b>${p.name}</b></div>
-                        <p class="text-sm">${p.text}</p>
-                        <img src="${p.image}" class="w-full rounded-2xl h-48 object-cover">
-                        <div class="flex gap-4 pt-2 border-t text-xs font-bold">
-                            <button onclick="likePost('${d.id}')" class="text-red-500"><i class="fa-solid fa-heart"></i> ${p.likes.length}</button>
-                            <button onclick="document.getElementById('c-${d.id}').classList.toggle('hidden')"><i class="fa-solid fa-comment"></i> কমেন্ট</button>
-                        </div>
-                        <div id="c-${d.id}" class="hidden pt-2 space-y-2">
-                            <div id="list-${d.id}" class="text-[10px] space-y-1"></div>
-                            <div class="flex gap-2"><input id="in-${d.id}" class="flex-1 bg-gray-50 border rounded-lg p-1 text-black outline-none"><button onclick="addCom('${d.id}')" class="bg-green-600 text-white px-2 rounded-lg">Send</button></div>
+                    <div class="bg-[#161b22] p-4 rounded-2xl border border-[#30363d] space-y-3 text-sm">
+                        <div class="flex items-center gap-2"><img src="${p.photo}" class="w-8 h-8 rounded-full border border-[#30363d]"><b>${p.name}</b></div>
+                        <p class="text-gray-300 text-xs">${p.text}</p>
+                        <img src="${p.image}" class="w-full rounded-xl h-44 object-cover border border-[#30363d]">
+                        <div class="flex gap-4 pt-2 border-t border-[#30363d] text-xs font-bold">
+                            <button onclick="likePost('${d.id}')" class="text-red-400"><i class="fa-solid fa-heart"></i> ${p.likes ? p.likes.length : 0}</button>
                         </div>
                     </div>`;
-                    loadCom(d.id);
                 });
                 document.getElementById('feed').innerHTML = html;
             });
         }
 
-        window.likePost = async (id) => {
-            const ref = doc(db, "posts", id);
-            const s = await getDoc(ref);
-            let l = s.data().likes || [];
-            if(l.includes(auth.currentUser.uid)) l = l.filter(i => i !== auth.currentUser.uid);
-            else l.push(auth.currentUser.uid);
-            await updateDoc(ref, { likes: l });
-        };
-
-        window.addCom = async (id) => {
-            const i = document.getElementById(`in-${id}`);
-            if(!i.value) return;
-            await addDoc(collection(db, "posts", id, "comments"), { name: auth.currentUser.displayName, text: i.value, time: new Date() });
-            i.value = "";
-        };
-
-        function loadCom(id) {
-            onSnapshot(query(collection(db, "posts", id, "comments"), orderBy("time", "asc")), s => {
-                let h = ""; s.forEach(cd => h += `<div><b>${cd.data().name}:</b> ${cd.data().text}</div>`);
-                const el = document.getElementById(`list-${id}`); if(el) el.innerHTML = h;
-            });
-        }
-
         function loadRankings() {
             onSnapshot(query(collection(db, "users"), orderBy("xp", "desc")), snap => {
-                let h = ""; snap.forEach(d => h += `<div class="p-3 flex justify-between"><span>${d.data().name}</span><b>${d.data().xp} XP</b></div>`);
+                let h = ""; snap.forEach(d => h += `<div class="p-3 flex justify-between text-xs text-gray-300"><span>${d.data().name}</span><b class="text-[#2ea44f]">${d.data().xp} XP</b></div>`);
                 document.getElementById('leaderboard').innerHTML = h;
             });
         }
 
-        // --- অন্যান্য ---
+        // --- Navigation Controller ---
         window.switchTab = t => {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active-tab'));
             document.getElementById('tab-' + t).classList.add('active-tab');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-green-600', 'text-gray-400'));
-            event.currentTarget.classList.replace('text-gray-400', 'text-green-600');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('text-[#2ea44f]', 'text-gray-500'));
+            event.currentTarget.classList.replace('text-gray-400', 'text-[#2ea44f]');
+            event.currentTarget.classList.replace('text-gray-500', 'text-[#2ea44f]');
+            if(t === 'map') { setTimeout(() => { map.invalidateSize(); }, 200); }
         };
-        window.toggleDark = () => document.body.classList.toggle('dark-mode');
+
         window.logout = () => signOut(auth).then(() => location.reload());
     </script>
 </body>
-</html>
+                    </html>
