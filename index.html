@@ -36,9 +36,9 @@
 </head>
 <body class="pb-28">
 
-    <section id="auth-screen" class="fixed inset-0 z-[200] bg-[#0d1117] flex items-center justify-center p-6 overflow-y-auto">
-        <div class="bg-[#161b22] p-8 rounded-[2rem] border border-[#30363d] text-center max-w-sm w-full space-y-6">
-            <h1 class="text-3xl font-black text-[#2ea44f]">🌱 সবুজ শিখর</h1>
+    <section id="auth-screen" class="fixed inset-0 z-[200] bg-[#0d1117] flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-[#161b22] p-6 rounded-[2rem] border border-[#30363d] text-center max-w-md w-full space-y-5 my-auto">
+            <h1 class="text-3xl font-black text-[#2ea44f]">🌱সবুজ শিখর</h1>
             
             <div class="flex border-b border-[#30363d] text-sm">
                 <button id="tab-login-btn" onclick="toggleAuthTab('login')" class="flex-1 pb-2 border-b-2 border-[#2ea44f] text-white font-bold">লগইন</button>
@@ -55,21 +55,27 @@
                 </button>
             </div>
 
-            <div id="auth-reg-tab" class="auth-tab space-y-4">
-                <p class="text-gray-400 text-xs">নতুন একাউন্ট খুলতে নিচের তথ্যগুলো দিন</p>
+            <div id="auth-reg-tab" class="auth-tab space-y-4 max-h-[60vh] overflow-y-auto px-1">
+                <p class="text-gray-400 text-xs mb-2">নতুন অ্যাকাউন্ট খুলতে সঠিক তথ্যগুলো প্রদান করুন</p>
                 
                 <div class="space-y-3 text-left">
-                    <div>
-                        <label class="text-xs text-gray-400 block mb-1">নির্ধারিত রেজিস্ট্রেশন কোড *</label>
-                        <input id="reg-code" type="text" placeholder="কোডটি এখানে লিখুন" class="w-full p-3 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-sm outline-none focus:border-[#2ea44f]">
+                    <input id="reg-name" type="text" placeholder="পূর্ণ নাম" class="w-full p-2.5 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-xs outline-none focus:border-[#2ea44f]">
+                    <input id="reg-phone" type="tel" placeholder="ফোন নম্বর" class="w-full p-2.5 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-xs outline-none focus:border-[#2ea44f]">
+                    <input id="reg-place" type="text" placeholder="স্থান/গ্রাম/রোড" class="w-full p-2.5 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-xs outline-none focus:border-[#2ea44f]">
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <input id="reg-upazila" type="text" placeholder="উপজেলা" class="w-full p-2.5 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-xs outline-none focus:border-[#2ea44f]">
+                        <input id="reg-district" type="text" placeholder="জেলা" class="w-full p-2.5 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-xs outline-none focus:border-[#2ea44f]">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <input id="reg-division" type="text" placeholder="বিভাগ" class="w-full p-2.5 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-xs outline-none focus:border-[#2ea44f]">
+                        <input id="reg-job" type="text" placeholder="পেশা" class="w-full p-2.5 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-xs outline-none focus:border-[#2ea44f]">
                     </div>
                 </div>
 
-                <button id="btn-google-reg" class="w-full flex items-center justify-center gap-3 bg-[#238636] hover:bg-[#2ea44f] py-3 rounded-xl font-bold text-white transition text-sm shadow-lg">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18" class="bg-white rounded-full p-0.5"> কোড যাচাই ও Google দিয়ে সাইন-আপ
-                </button>
-                <button onclick="alert('ফোন নম্বর রেজিস্ট্রেশন ফিচারটি শীঘ্রই আসছে!')" class="w-full flex items-center justify-center gap-3 bg-[#21262d] border border-[#30363d] py-3 rounded-xl font-bold hover:bg-[#30363d] text-white transition text-sm">
-                    <i class="fa-solid fa-phone text-[#2ea44f]"></i> ফোন নম্বর দিয়ে রেজিস্ট্রেশন
+                <button id="btn-google-reg" class="w-full flex items-center justify-center gap-3 bg-[#238636] hover:bg-[#2ea44f] py-3 rounded-xl font-bold text-white transition text-sm shadow-lg pt-3">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18" class="bg-white rounded-full p-0.5"> তথ্য নিশ্চিত করুন ও Google দিয়ে সাইন-আপ
                 </button>
             </div>
 
@@ -191,9 +197,6 @@
         const provider = new GoogleAuthProvider();
         const GEMINI_KEY = "AIzaSyB6lRD9MW7p0cruCKW7w1179CblDhpanS4";
         
-        // নির্ধারিত রেজিস্ট্রেশন কোড
-        const VALID_REG_CODE = "GREEN2026"; 
-
         let map, userMarker;
 
         // --- Auth Tab Toggler ---
@@ -217,35 +220,52 @@
                 const userRef = doc(db, "users", user.uid);
                 const snap = await getDoc(userRef);
                 if (!snap.exists()) {
-                    alert("আপনার কোনো অ্যাকাউন্ট নেই! দয়া করে রেজিস্ট্রেশন করুন।");
+                    alert("আপনার কোনো অ্যাকাউন্ট নেই! দয়া করে পাশে রেজিস্ট্রেশন করুন।");
                     await signOut(auth);
                 }
             }).catch(e => alert("লগইন ব্যর্থ হয়েছে!"));
         };
 
-        // --- Google Registration with Validation Code ---
+        // --- Google Registration with Full Data Fields ---
         document.getElementById('btn-google-reg').onclick = () => {
-            const codeInput = document.getElementById('reg-code').value.trim();
-            if(codeInput !== VALID_REG_CODE) {
-                return alert("ভুল রেজিস্ট্রেশন কোড! সঠিক কোডটি দিন।");
+            const name = document.getElementById('reg-name').value.trim();
+            const phone = document.getElementById('reg-phone').value.trim();
+            const place = document.getElementById('reg-place').value.trim();
+            const upazila = document.getElementById('reg-upazila').value.trim();
+            const district = document.getElementById('reg-district').value.trim();
+            const division = document.getElementById('reg-division').value.trim();
+            const job = document.getElementById('reg-job').value.trim();
+
+            // সব ঘর পূরণ বাধ্যতামূলক করা হয়েছে
+            if(!name || !phone || !place || !upazila || !district || !division || !job) {
+                return alert("দয়া করে রেজিস্ট্রেশনের সব ঘর সঠিকভাবে পূরণ করুন!");
             }
 
             signInWithPopup(auth, provider).then(async (res) => {
                 const user = res.user;
                 const userRef = doc(db, "users", user.uid);
                 const snap = await getDoc(userRef);
+                
                 if (!snap.exists()) {
-                    await setDoc(userRef, { name: user.displayName, bio: "আমি একজন নতুন সবুজ যোদ্ধা", xp: 110, photo: user.photoURL });
-                    alert("রেজিস্ট্রেশন সফল হয়েছে!");
+                    // ডেটাবেজে সম্পূর্ণ কাস্টম ডেটা সাবমিট হচ্ছে
+                    await setDoc(userRef, { 
+                        name: name,
+                        phone: phone,
+                        location: { place, upazila, district, division },
+                        bio: job, 
+                        xp: 120, 
+                        photo: user.photoURL,
+                        regDate: new Date()
+                    });
+                    alert("রেজিস্ট্রেশন সফল হয়েছে এবং আপনার প্রোফাইল তৈরি হয়েছে!");
                 } else {
-                    alert("আপনার ইতিমধ্যে একটি অ্যাকাউন্ট আছে। লগইন করুন।");
+                    alert("আপনার ইতিমধ্যে একটি অ্যাকাউন্ট আছে। সরাসরি লগইন করুন।");
                 }
             }).catch(e => alert("রেজিস্ট্রেশন ব্যর্থ হয়েছে!"));
         };
 
         onAuthStateChanged(auth, user => {
             if (user) {
-                // চেক করা হচ্ছে ইউজারের ডাটাবেজে ফাইল আছে কি না (ভুল লগইন এড়াতে)
                 getDoc(doc(db, "users", user.uid)).then(snap => {
                     if(snap.exists()){
                         document.getElementById('auth-screen').style.display = 'none';
@@ -390,4 +410,4 @@
         window.logout = () => signOut(auth).then(() => location.reload());
     </script>
 </body>
-                    </html>
+                        </html>
