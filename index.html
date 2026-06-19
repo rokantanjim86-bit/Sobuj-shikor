@@ -36,11 +36,9 @@
 </head>
 <body class="pb-28">
 
-    <div id="recaptcha-container" class="hidden"></div>
-
     <section id="auth-screen" class="fixed inset-0 z-[200] bg-[#0d1117] flex items-center justify-center p-4 overflow-y-auto">
         <div class="bg-[#161b22] p-6 rounded-[2rem] border border-[#30363d] text-center max-w-md w-full space-y-5 my-auto">
-            <h1 class="text-3xl font-black text-[#2ea44f]">🌱 সবুজ শিখর</h1>
+            <h1 class="text-3xl font-black text-[#2ea44f]">🌱সবুজ শিখর</h1>
             
             <div class="flex border-b border-[#30363d] text-sm">
                 <button id="tab-login-btn" onclick="toggleAuthTab('login')" class="flex-1 pb-2 border-b-2 border-[#2ea44f] text-white font-bold">লগইন</button>
@@ -51,8 +49,8 @@
                 <p class="text-gray-400 text-xs">আপনার অ্যাকাউন্টে প্রবেশ করুন</p>
                 
                 <div id="phone-login-fields" class="space-y-3 text-left hidden">
-                    <input id="login-phone" type="tel" placeholder="আপনার ফোন নম্বর দিন (+8801...)" class="w-full p-2.5 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-xs outline-none focus:border-[#2ea44f]">
-                    <button id="btn-send-otp-login" class="w-full bg-[#2ea44f] py-2 rounded-xl text-white font-bold text-xs">ওটিপি (OTP) পাঠান</button>
+                    <input id="login-phone" type="tel" placeholder="আপনার রেজিস্টার্ড ফোন নম্বর দিন" class="w-full p-2.5 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-xs outline-none focus:border-[#2ea44f]">
+                    <button id="btn-phone-login-submit" class="w-full bg-[#2ea44f] py-2.5 rounded-xl text-white font-bold text-xs transition hover:bg-[#238636]">লগইন করুন</button>
                 </div>
 
                 <button id="btn-google-login" class="w-full flex items-center justify-center gap-3 bg-[#21262d] border border-[#30363d] py-3 rounded-xl font-bold hover:bg-[#30363d] text-white transition text-sm">
@@ -69,7 +67,7 @@
                 
                 <div class="space-y-3 text-left">
                     <input id="reg-name" type="text" placeholder="পূর্ণ নাম" class="w-full p-2.5 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-xs outline-none focus:border-[#2ea44f]">
-                    <input id="reg-phone" type="tel" placeholder="ফোন নম্বর (+8801...)" class="w-full p-2.5 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-xs outline-none focus:border-[#2ea44f]">
+                    <input id="reg-phone" type="tel" placeholder="ফোন নম্বর" class="w-full p-2.5 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-xs outline-none focus:border-[#2ea44f]">
                     <input id="reg-place" type="text" placeholder="স্থান/গ্রাম/রোড" class="w-full p-2.5 bg-[#0d1117] border border-[#30363d] rounded-xl text-white text-xs outline-none focus:border-[#2ea44f]">
                     
                     <div class="grid grid-cols-2 gap-2">
@@ -84,24 +82,23 @@
                 </div>
 
                 <button id="btn-google-reg" class="w-full flex items-center justify-center gap-3 bg-[#238636] hover:bg-[#2ea44f] py-3 rounded-xl font-bold text-white transition text-sm shadow-lg">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18" class="bg-white rounded-full p-0.5"> তথ্য নিশ্চিত ও Google দিয়ে রেজিস্ট্রেশন
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/action/google.svg" width="18" class="bg-white rounded-full p-0.5"> Google দিয়ে রেজিস্ট্রেশন সম্পন্ন করুন
                 </button>
                 
                 <button id="btn-phone-reg" class="w-full flex items-center justify-center gap-3 bg-[#21262d] border border-[#30363d] py-3 rounded-xl font-bold hover:bg-[#30363d] text-white transition text-sm">
-                    <i class="fa-solid fa-phone text-[#2ea44f]"></i> তথ্য নিশ্চিত ও ফোন নম্বর দিয়ে রেজিস্ট্রেশন
+                    <i class="fa-solid fa-phone text-[#2ea44f]"></i> ফোন নম্বর দিয়ে রেজিস্ট্রেশন করুন
                 </button>
             </div>
-
         </div>
     </section>
 
     <div id="feature-modal" class="fixed inset-0 bg-black/80 z-[150] hidden flex items-center justify-center p-4">
-        <div class="bg-[#161b22] w-full max-w-md rounded-2xl border border-[#30363d] p-6 space-y-4 relative">
+        <div class="bg-[#161b22] w-full max-w-md rounded-2xl border border-[#30363d] p-6 space-y-4 relative flex flex-col max-h-[85vh]">
             <button onclick="closeFeatureModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white text-lg">✕</button>
             <h3 id="modal-title" class="text-xl font-bold text-[#2ea44f] flex items-center gap-2"></h3>
             <hr class="border-[#30363d]">
-            <div id="modal-body" class="space-y-4 max-h-[60vh] overflow-y-auto text-sm text-gray-300">
-                </div>
+            
+            <div id="modal-body" class="space-y-4 overflow-y-auto flex-1 pr-1 text-xs"></div>
         </div>
     </div>
 
@@ -110,12 +107,11 @@
             <h2 class="font-bold text-[#2ea44f] text-xl tracking-wide">🌱সবুজ শিখর</h2>
             <div class="flex items-center gap-3">
                 <div class="bg-[#238636]/20 text-[#2ea44f] border border-[#238636]/40 px-3 py-1 rounded-full text-xs font-bold"><span id="u-xp">0</span> XP</div>
-                <img id="u-img" class="w-10 h-10 rounded-full border-2 border-[#2ea44f] cursor-pointer" onclick="switchTab('profile')">
+                <img id="u-img" class="w-10 h-10 rounded-full border-2 border-[#2ea44f] cursor-pointer" onclick="switchTab('profile')" src="https://via.placeholder.com/150">
             </div>
         </header>
 
         <main class="max-w-md mx-auto p-4 space-y-5">
-            
             <div id="tab-home" class="tab-content active-tab space-y-5">
                 <div class="grid grid-cols-2 gap-3">
                     <div onclick="openFeature('plants')" class="premium-card p-4 flex flex-col items-center justify-center text-center cursor-pointer space-y-2">
@@ -163,7 +159,7 @@
 
             <div id="tab-profile" class="tab-content space-y-4">
                 <div class="bg-[#161b22] p-6 rounded-2xl border border-[#30363d] text-center space-y-3">
-                    <img id="pr-img" class="w-20 h-20 rounded-full mx-auto border-2 border-[#2ea44f] shadow-lg">
+                    <img id="pr-img" class="w-20 h-20 rounded-full mx-auto border-2 border-[#2ea44f] shadow-lg" src="https://via.placeholder.com/150">
                     <h2 id="pr-name" class="text-xl font-bold text-white">নাম</h2>
                     <p id="pr-bio" class="text-gray-400 text-sm"></p>
                 </div>
@@ -202,8 +198,8 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, signInWithPhoneNumber, RecaptchaVerifier } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, onSnapshot, query, orderBy, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, onSnapshot, query, orderBy, increment, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAPFw8UVunLn_ob9zuaY-0unZyiA0bED70",
@@ -220,59 +216,51 @@
         const provider = new GoogleAuthProvider();
         const GEMINI_KEY = "AIzaSyB6lRD9MW7p0cruCKW7w1179CblDhpanS4";
         
-        let map, userMarker;
+        let map, userMarker, currentUserData = null;
 
-        // --- Auth Tab Toggler ---
+        // --- Auth Controls ---
         window.toggleAuthTab = (type) => {
             document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
             document.getElementById(`auth-${type}-tab`).classList.add('active');
-            
-            if(type === 'login') {
-                document.getElementById('tab-login-btn').className = "flex-1 pb-2 border-b-2 border-[#2ea44f] text-white font-bold";
-                document.getElementById('tab-reg-btn').className = "flex-1 pb-2 border-b-2 border-transparent text-gray-400 font-bold";
-            } else {
-                document.getElementById('tab-reg-btn').className = "flex-1 pb-2 border-b-2 border-[#2ea44f] text-white font-bold";
-                document.getElementById('tab-login-btn').className = "flex-1 pb-2 border-b-2 border-transparent text-gray-400 font-bold";
-            }
         }
 
-        // --- Phone Login Feature ---
         window.showPhoneLogin = () => {
             document.getElementById('phone-login-fields').classList.toggle('hidden');
         }
 
-        document.getElementById('btn-send-otp-login').onclick = () => {
-            const num = document.getElementById('login-phone').value.trim();
-            if(!num) return alert("ফোন নম্বর দিন!");
-            // প্র্যাকটিক্যাল ডামি লগইন মেকানিজম বা ফায়ারবেস ইন্টিগ্রেশন ট্রায়াল
-            alert("ওটিপি পাঠানো হয়েছে (টেস্টিং মোড)। কোড: 123456");
-            const otp = prompt("আপনার ওটিপি (OTP) কোডটি এখানে লিখুন:");
-            if(otp === "123456") {
-                // ডেমো সেশন পাস
-                document.getElementById('auth-screen').style.display = 'none';
-                document.getElementById('app-content').classList.remove('hidden');
-                initMap();
-                loadFeed();
+        // --- ফোন নম্বর দিয়ে লগইন করার ফাংশন ---
+        document.getElementById('btn-phone-login-submit').onclick = async () => {
+            const phone = document.getElementById('login-phone').value.trim();
+            if(!phone) return alert("ফোন নম্বর দিন!");
+            
+            // ডেটাবেজে এই ফোন নম্বরটি আছে কিনা চেক করা
+            const qUsers = query(collection(db, "users"), where("phone", "==", phone));
+            const querySnapshot = await getDocs(qUsers);
+            
+            if (!querySnapshot.empty) {
+                querySnapshot.forEach((userDoc) => {
+                    currentUserData = userDoc.data();
+                    currentUserData.uid = userDoc.id;
+                    loginSuccess(currentUserData);
+                });
             } else {
-                alert("ভুল ওটিপি!");
+                alert("এই ফোন নম্বর দিয়ে কোনো অ্যাকাউন্ট পাওয়া যায়নি! দয়া করে রেজিস্ট্রেশন করুন।");
             }
         };
 
-        // --- Google Login ---
+        // --- গুগল দিয়ে লগইন ---
         document.getElementById('btn-google-login').onclick = () => {
             signInWithPopup(auth, provider).then(async (res) => {
-                const user = res.user;
-                const userRef = doc(db, "users", user.uid);
-                const snap = await getDoc(userRef);
+                const snap = await getDoc(doc(db, "users", res.user.uid));
                 if (!snap.exists()) {
-                    alert("আপনার কোনো অ্যাকাউন্ট নেই! দয়া করে পাশে রেজিস্ট্রেশন করুন।");
+                    alert("অ্যাকাউন্ট নেই! প্রথমে রেজিস্ট্রেশন সম্পন্ন করুন।");
                     await signOut(auth);
                 }
-            }).catch(e => alert("লগইন ব্যর্থ হয়েছে বা নেটওয়ার্ক সমস্যা!"));
+            }).catch(e => alert("লগইন ব্যর্থ!"));
         };
 
-        // --- Phone/Google Registration Form Action ---
-        const handleRegistrationData = async (user, isPhone = false) => {
+        // --- রেজিস্ট্রেশন প্রোসেস (গুগল ও ফোন দুইটার জন্যই) ---
+        const registerUserNode = async (customUid, authPhoto = "") => {
             const name = document.getElementById('reg-name').value.trim();
             const phone = document.getElementById('reg-phone').value.trim();
             const place = document.getElementById('reg-place').value.trim();
@@ -282,42 +270,71 @@
             const job = document.getElementById('reg-job').value.trim();
 
             if(!name || !phone || !place || !upazila || !district || !division || !job) {
-                alert("দয়া করে রেজিস্ট্রেশনের সব ঘর সঠিকভাবে পূরণ করুন!");
-                return false;
+                alert("সবগুলো ঘর পূরণ করা বাধ্যতামূলক!");
+                return null;
             }
 
-            const uid = user ? user.uid : "phone_" + Date.now();
-            const userRef = doc(db, "users", uid);
-            
-            await setDoc(userRef, { 
-                name: name,
-                phone: phone,
+            const userData = {
+                name, phone, bio: job, xp: 120,
                 location: { place, upazila, district, division },
-                bio: job, 
-                xp: 120, 
-                photo: user?.photoURL || "https://www.w3schools.com/howto/img_avatar.png",
+                photo: authPhoto || "https://api.dicebear.com/7.x/bottts/svg?seed=" + name,
                 regDate: new Date()
-            });
+            };
 
-            alert("রেজিস্ট্রেশন সফল হয়েছে!");
-            document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('app-content').classList.remove('hidden');
-            initMap();
-            loadFeed();
-            return true;
+            await setDoc(doc(db, "users", customUid), userData);
+            userData.uid = customUid;
+            return userData;
+        };
+
+        document.getElementById('btn-phone-reg').onclick = async () => {
+            const phone = document.getElementById('reg-phone').value.trim();
+            if(!phone) return alert("ফোন নম্বর দিন!");
+            const generatedUid = "phone_" + Math.random().toString(36).substr(2, 9);
+            const data = await registerUserNode(generatedUid);
+            if(data) {
+                alert("রেজিস্ট্রেশন সফল!");
+                loginSuccess(data);
+            }
         };
 
         document.getElementById('btn-google-reg').onclick = () => {
             signInWithPopup(auth, provider).then(async (res) => {
-                await handleRegistrationData(res.user);
-            }).catch(e => alert("গুগল কানেকশন ব্যর্থ হয়েছে!"));
+                const user = res.user;
+                const data = await registerUserNode(user.uid, user.photoURL);
+                if(!data) await signOut(auth);
+            }).catch(e => alert("গুগল কানেকশন সমস্যা!"));
         };
 
-        document.getElementById('btn-phone-reg').onclick = () => {
-            handleRegistrationData(null, true);
-        };
+        function loginSuccess(userData) {
+            currentUserData = userData;
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('app-content').classList.remove('hidden');
+            loadUserUI(userData);
+            loadFeed();
+            loadRankings();
+            initMap();
+        }
 
-        // --- অ্যাপ ফিচার হ্যান্ডলার (গাছ কেনাবেচা ও বই আদানপ্রদান এর ভেতরে ঢোকার ব্যবস্থা) ---
+        onAuthStateChanged(auth, async user => {
+            if (user) {
+                const snap = await getDoc(doc(db, "users", user.uid));
+                if(snap.exists()) {
+                    let data = snap.data();
+                    data.uid = user.uid;
+                    loginSuccess(data);
+                }
+            }
+        });
+
+        function loadUserUI(u) {
+            document.getElementById('u-xp').innerText = u.xp;
+            document.getElementById('u-img').src = u.photo;
+            document.getElementById('pr-img').src = u.photo;
+            document.getElementById('pr-name').innerText = u.name;
+            document.getElementById('pr-bio').innerText = u.bio;
+        }
+
+        // --- গাছ কেনাবেচা ও বই আদানপ্রদান এর রিয়েল-টাইম ফাংশন ---
         window.openFeature = (type) => {
             const modal = document.getElementById('feature-modal');
             const title = document.getElementById('modal-title');
@@ -327,39 +344,77 @@
             if(type === 'plants') {
                 title.innerHTML = "🌱 গাছ কেনাবেচা বাজার";
                 body.innerHTML = `
-                    <div class="bg-[#0d1117] p-3 rounded-xl border border-[#30363d] flex justify-between items-center">
-                        <div><b>ইনডোর ক্যাকটাস</b><p class="text-xs text-green-400">মূল্য: ১২০ টাকা</p></div>
-                        <button onclick="alert('যোগাযোগ সফল! বিক্রেতার সাথে চ্যাট করুন।')" class="bg-[#238636] text-white px-3 py-1 rounded-lg text-xs">কিনুন</button>
+                    <div class="bg-[#0d1117] p-3 rounded-xl border border-[#30363d] space-y-2">
+                        <b class="text-green-400">নতুন চারা/গাছ যুক্ত করুন:</b>
+                        <input id="f-plant-name" type="text" placeholder="গাছের নাম" class="w-full p-2 bg-[#161b22] border border-[#30363d] rounded-lg text-white text-xs outline-none">
+                        <input id="f-plant-price" type="text" placeholder="দাম (টাকা)" class="w-full p-2 bg-[#161b22] border border-[#30363d] rounded-lg text-white text-xs outline-none">
+                        <button id="btn-add-plant" class="w-full bg-[#238636] py-1.5 rounded-lg text-white font-bold">বিজ্ঞাপন দিন</button>
                     </div>
-                    <div class="bg-[#0d1117] p-3 rounded-xl border border-[#30363d] flex justify-between items-center">
-                        <div><b>আমের চারা (আম্রপালি)</b><p class="text-xs text-green-400">মূল্য: ২৫০ টাকা</p></div>
-                        <button onclick="alert('যোগাযোগ সফল!')" class="bg-[#238636] text-white px-3 py-1 rounded-lg text-xs">কিনুন</button>
-                    </div>
-                    <button onclick="alert('নতুন গাছের বিজ্ঞাপন দেওয়ার ফর্মটি শীঘ্রই যুক্ত হচ্ছে')" class="w-full bg-[#21262d] py-2.5 rounded-xl border border-[#30363d] font-bold text-xs text-white">+ আপনার গাছ বিক্রি করুন</button>
+                    <div id="plants-list" class="space-y-2 pt-2">লোডিং...</div>
                 `;
+                
+                // গাছ আপলোড অ্যাকশন
+                document.getElementById('btn-add-plant').onclick = async () => {
+                    const pName = document.getElementById('f-plant-name').value.trim();
+                    const pPrice = document.getElementById('f-plant-price').value.trim();
+                    if(!pName || !pPrice) return alert("সব তথ্য দিন!");
+                    await addDoc(collection(db, "plants"), { name: pName, price: pPrice, seller: currentUserData.name, time: new Date() });
+                    alert("গাছের বিজ্ঞাপন সফলভাবে লাইভ হয়েছে!");
+                    openFeature('plants');
+                };
+
+                // গাছ লোড করা ডেটাবেজ থেকে
+                onSnapshot(query(collection(db, "plants"), orderBy("time", "desc")), snap => {
+                    let h = "";
+                    snap.forEach(d => {
+                        const item = d.data();
+                        h += `<div class="bg-[#0d1117] p-3 rounded-xl border border-[#30363d] flex justify-between items-center">
+                            <div><b>${item.name}</b><p class="text-[10px] text-gray-400">বিক্রেতা: ${item.seller}</p></div>
+                            <span class="bg-[#238636]/20 text-[#2ea44f] px-2 py-1 rounded text-[10px] font-bold">${item.price} ৳</span>
+                        </div>`;
+                    });
+                    document.getElementById('plants-list').innerHTML = h || "<p class='text-center text-gray-500'>কোনো গাছ বিক্রির জন্য নেই।</p>";
+                });
+
             } else if(type === 'books') {
-                title.innerHTML = "📚 বই আদানপ্রদান ক্লায়েন্ট";
+                title.innerHTML = "📚 বই আদানপ্রদান এক্সচেঞ্জ";
                 body.innerHTML = `
-                    <div class="bg-[#0d1117] p-3 rounded-xl border border-[#30363d] flex justify-between items-center">
-                        <div><b>পরিবেশ ও প্রকৃতি বিদ্যা</b><p class="text-xs text-blue-400">ধরণ: ফ্রি এক্সচেঞ্জ</p></div>
-                        <button onclick="alert('বইটি বুক করা হয়েছে')" class="bg-[#238636] text-white px-3 py-1 rounded-lg text-xs">সংগ্রহ করুন</button>
+                    <div class="bg-[#0d1117] p-3 rounded-xl border border-[#30363d] space-y-2">
+                        <b class="text-blue-400">বই শেয়ার করুন:</b>
+                        <input id="f-book-name" type="text" placeholder="বইয়ের নাম" class="w-full p-2 bg-[#161b22] border border-[#30363d] rounded-lg text-white text-xs outline-none">
+                        <button id="btn-add-book" class="w-full bg-[#238636] py-1.5 rounded-lg text-white font-bold">বই যুক্ত করুন</button>
                     </div>
-                    <button onclick="alert('বই এক্সচেঞ্জ ফিচার আপডেটের কাজ চলছে')" class="w-full bg-[#21262d] py-2.5 rounded-xl border border-[#30363d] font-bold text-xs text-white">+ এক্সচেঞ্জের জন্য বই আপলোড করুন</button>
+                    <div id="books-list" class="space-y-2 pt-2">লোডিং...</div>
                 `;
+
+                document.getElementById('btn-add-book').onclick = async () => {
+                    const bName = document.getElementById('f-book-name').value.trim();
+                    if(!bName) return alert("বইয়ের নাম লিখুন!");
+                    await addDoc(collection(db, "books"), { name: bName, owner: currentUserData.name, time: new Date() });
+                    alert("বই এক্সচেঞ্জ লিস্টে যুক্ত হয়েছে!");
+                    openFeature('books');
+                };
+
+                onSnapshot(query(collection(db, "books"), orderBy("time", "desc")), snap => {
+                    let h = "";
+                    snap.forEach(d => {
+                        const item = d.data();
+                        h += `<div class="bg-[#0d1117] p-3 rounded-xl border border-[#30363d] flex justify-between items-center">
+                            <div><b>${item.name}</b><p class="text-[10px] text-gray-400">শেয়ারকারী: ${item.owner}</p></div>
+                            <button onclick="alert('বুকিং রিকোয়েস্ট পাঠানো হয়েছে!')" class="bg-[#21262d] text-white border border-[#30363d] px-2 py-1 rounded text-[10px]">সংগ্রহ করুন</button>
+                        </div>`;
+                    });
+                    document.getElementById('books-list').innerHTML = h || "<p class='text-center text-gray-500'>কোনো বই আদানপ্রদানের জন্য নেই।</p>";
+                });
             } else if(type === 'eco') {
-                title.innerHTML = "♻️ পরিবেশবান্ধব ইভেন্ট";
-                body.innerHTML = `
-                    <p class="text-xs text-gray-400">আপনার এলাকায় বৃক্ষরোপণ কর্মসূচি বা প্লাস্টিক বর্জন ইভেন্ট তৈরি করুন এবং পয়েন্ট অর্জন করুন।</p>
-                    <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-xs">রানিং ইভেন্ট: মিরপুর ক্লিন আপ প্রজেক্ট (শনিবার সকাল ১০টা)</div>
-                `;
+                title.innerHTML = "♻️ পরিবেশবান্ধব কাজ";
+                body.innerHTML = `<p class="text-gray-400">এলাকায় প্লাস্টিক বর্জন ও ইকো ইভেন্ট প্রজেক্ট দ্রুত লাইভ হচ্ছে। পয়েন্ট অর্জন করতে হোম স্ক্রিনে আপনার বৃক্ষরোপণের ছবি পোস্ট করুন।</p>`;
             }
         };
 
-        window.closeFeatureModal = () => {
-            document.getElementById('feature-modal').classList.add('hidden');
-        };
+        window.closeFeatureModal = () => document.getElementById('feature-modal').classList.add('hidden');
 
-        // --- AI CHAT (Gemini API Error Fix & Fallback) ---
+        // --- AI Chat Logic ---
         window.toggleAI = () => document.getElementById('ai-box').classList.toggle('hidden');
         document.getElementById('ai-send').onclick = async () => {
             const inp = document.getElementById('ai-in').value.trim();
@@ -373,26 +428,18 @@
                 const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: inp + ". উত্তর খুব সংক্ষেপে এবং বাংলায় দাও।" }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: inp + ". উত্তর বাংলায় সংক্ষেপে দাও।" }] }] })
                 });
-                
-                if (!res.ok) throw new Error("API Key Restricted or Blocked");
-                
                 const data = await res.json();
                 const aiReply = data.candidates[0].content.parts[0].text;
                 chat.innerHTML += `<div class='text-left mb-2'><span class='bg-[#30363d] p-2 rounded-xl inline-block text-gray-100'><b>বন্ধু:</b> ${aiReply}</span></div>`;
             } catch (e) { 
-                // অটোমেটিক অফলাইন ইমার্জেন্সি ইকো-বট রেসপন্স যাতে 'সংযোগ ত্রুটি' না আসে
-                let fallbackReply = "ধন্যবাদ! আমি এই মুহূর্তে আপডেট হচ্ছি। গাছ লাগানো ও পরিবেশ সচেতনতা বৃদ্ধি করতে 'সবুজ শিখর'-এর সাথেই থাকুন।";
-                if(inp.includes("গাছ") || inp.includes("Hi")) {
-                    fallbackReply = "হ্যালো! বেশি বেশি গাছ লাগান, পরিবেশ বাঁচান। যেকোনো গাছের পরিচর্যা সম্পর্কে জানতে আমাদের গ্রিন ম্যাপ ফলো করুন।";
-                }
-                chat.innerHTML += `<div class='text-left mb-2'><span class='bg-[#30363d] p-2 rounded-xl inline-block text-gray-100'><b>বন্ধু:</b> ${fallbackReply}</span></div>`;
+                chat.innerHTML += `<div class='text-left mb-2'><span class='bg-[#30363d] p-2 rounded-xl inline-block text-gray-100'><b>বন্ধু:</b> গাছ লাগান, পরিবেশ বাঁচান! যেকোনো গাছ বা বাগান বিষয়ক প্রশ্ন করতে আপনার জেমিনি এপিআই কি-টি আপডেট করুন।</span></div>`;
             }
             chat.scrollTop = chat.scrollHeight;
         };
 
-        // --- Real-time Feed & Posts ---
+        // --- Feed Functions ---
         function loadFeed() {
             onSnapshot(query(collection(db, "posts"), orderBy("time", "desc")), snap => {
                 let html = "";
@@ -400,20 +447,25 @@
                     const p = d.data();
                     html += `
                     <div class="bg-[#161b22] p-4 rounded-2xl border border-[#30363d] space-y-3 text-sm">
-                        <div class="flex items-center gap-2"><img src="${p.photo}" class="w-8 h-8 rounded-full border border-[#30363d]"><b>${p.name}</b></div>
+                        <div class="flex items-center gap-2"><img src="${p.photo || 'https://via.placeholder.com/150'}" class="w-8 h-8 rounded-full border border-[#30363d]"><b>${p.name}</b></div>
                         <p class="text-gray-300 text-xs">${p.text}</p>
-                        <img src="${p.image}" class="w-full rounded-xl h-44 object-cover border border-[#30363d]">
+                        ${p.image ? `<img src="${p.image}" class="w-full rounded-xl h-44 object-cover border border-[#30363d]">` : ''}
                     </div>`;
                 });
-                if(!html) html = "<p class='text-center text-xs text-gray-500 py-4'>এখনো কোনো পোস্ট নেই!</p>";
-                document.getElementById('feed').innerHTML = html;
+                document.getElementById('feed').innerHTML = html || "<p class='text-gray-500 text-center py-4 text-xs'>কোনো পোস্ট পাওয়া যায়নি।</p>";
             });
         }
 
-        // --- REAL-TIME MAP ---
+        function loadRankings() {
+            onSnapshot(query(collection(db, "users"), orderBy("xp", "desc")), snap => {
+                let h = ""; snap.forEach(d => h += `<div class="p-3 flex justify-between text-xs text-gray-300"><span>${d.data().name}</span><b class="text-[#2ea44f]">${d.data().xp} XP</b></div>`);
+                document.getElementById('leaderboard').innerHTML = h;
+            });
+        }
+
         function initMap() {
             if (map) return; 
-            map = L.map('map').setView([23.8103, 90.4125], 13);
+            map = L.map('map').setView([23.8103, 90.4125], 11);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
         }
 
@@ -422,6 +474,8 @@
             document.getElementById('tab-' + t).classList.add('active-tab');
             if(t === 'map') { setTimeout(() => { map.invalidateSize(); }, 200); }
         };
+
+        window.logout = () => signOut(auth).then(() => location.reload());
     </script>
 </body>
-                    </html>
+                        </html>
